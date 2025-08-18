@@ -466,7 +466,7 @@ class BlockChain:
         if sender == "node":
             fee = 0
         
-        if memo == None:
+        if memo != None:
             tx = {
                 'sender': sender,
                 'recipient': recipient,
@@ -475,19 +475,20 @@ class BlockChain:
                 'fee_percent': current_fee_percent,
                 'txid': txid,
                 'timestamp': time.time(),
-                'memo': 'None'# First 64 Charecters
+                'memo': memo[:self.memo_limit]# First 64 Charecters
+
             }
-        
-        tx = {
-            'sender': sender,
-            'recipient': recipient,
-            'quantity': quantity,
-            'fee': fee, # Add fee to transaction
-            'fee_percent': current_fee_percent,
-            'txid': txid,
-            'timestamp': time.time(),
-            'memo': memo[:self.memo_limit]# First 64 Charecters
-        }
+        else:
+            tx = {
+                'sender': sender,
+                'recipient': recipient,
+                'quantity': quantity,
+                'fee': fee, # Add fee to transaction
+                'fee_percent': current_fee_percent,
+                'txid': txid,
+                'timestamp': time.time(),
+                'memo': "None"
+            }
           
         try: 
             self.mempool.add_transaction(tx)
@@ -496,7 +497,7 @@ class BlockChain:
             return {"status": True, "txid": txid, "fee": fee}
         
         except MempoolFullError:
-            return {"status": False, "txid": None, "error": "Mempool is full"}
+            return {"status": False, "txid": None, "error": "Mempool is full. Try again later"}
 
     def proof_of_work(self , last_proof):
         '''this simple algorithm identifies a number f' such that hash(ff') contain 4 leading zeroes
@@ -944,8 +945,11 @@ async def submit_block(request):
     try:
         return json(vars(block), 201)
     except Exception as e:
-        if block[0]["status"] == "error":
+        # If block is a tuple (error response), return the error message
+        if isinstance(block, tuple) and isinstance(block[0], dict) and block[0].get("status") == "error":
             return json(block[0])
+        else:
+            return json({"message": "Unknown error occurred"}, 500)
 
 @app.get("/network/block/<block_identifier>/transactions")
 @openapi.description("Get all transactions from a block (by number or hash)")

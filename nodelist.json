@@ -1,5 +1,5 @@
 {
     "nodes": [
-        "http://zedovium.duckdns.org:4024"
+        "http://localhost:4024"
     ]
 }

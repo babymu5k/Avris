@@ -56,7 +56,7 @@ def clear_lines(count=1):
 def get_node():
     response = requests.get("https://raw.githubusercontent.com/babymu5k/Zedovium/refs/heads/develop/nodelist.json").json()
     return random.choice(response["nodes"])
-
+    
 def get_mining_info(node):
     response = requests.get(f"{node}/mining/info")
     return response.json()
@@ -130,6 +130,7 @@ def format_hash_rate(hash_rate):
         hash_rate /= 1000
         unit_index += 1
     return f"{hash_rate:.2f} {units[unit_index]}"
+
 def print_header(address):
     clear_screen()
     print(f"{COLORS['cyan']}╔══════════════════════════════════════════════════╗")

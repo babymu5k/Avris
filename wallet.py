@@ -201,6 +201,9 @@ class ZEDWalletCLI(cmd.Cmd):
 
             # Verify sufficient balance
             balance = self._get_balance(self.current_wallet["address"])
+            if isinstance(balance, Exception):
+                print(f"Error retrieving balance: {balance}")
+                return
             if balance < amount:
                 print(f"Insufficient balance. You have {balance} ZED")
                 return
@@ -315,6 +318,9 @@ class ZEDWalletCLI(cmd.Cmd):
     def do_transactions(self, arg):
         """Show recent transactions regarding this address: transactions [count]"""
         count = int(arg) if arg else 3
+        if not self.current_wallet:
+            print("No wallet loaded. Use 'new' or 'load' first.")
+            return
         try:
             response = requests.get(
                 f"{self.NODE_URL}/network/transactions/{self.current_wallet['address']}"
@@ -388,8 +394,10 @@ class ZEDWalletCLI(cmd.Cmd):
         print("-" * 80)
         for transaction in mempool["transactions"]:
             if (
-                transaction["sender"] == self.current_wallet["address"]
-                or transaction["recipient"] == self.current_wallet["address"]
+                self.current_wallet is not None and (
+                    transaction["sender"] == self.current_wallet["address"]
+                    or transaction["recipient"] == self.current_wallet["address"]
+                )
             ):
                 print(f"TXID: {transaction['txid']}")
                 print(f"From: {transaction['sender']}")
@@ -404,6 +412,10 @@ class ZEDWalletCLI(cmd.Cmd):
 
     def do_zedoguard(self, arg):
         """Check if you miner is going too fast and has been throttled by Zedoguard: zedoguard"""
+        if not self.current_wallet:
+            print("No wallet loaded. Use 'new' or 'load' first.")
+            return
+
         response = requests.get(
             f"{self.NODE_URL}/network/checkaddrdiff/{self.current_wallet['address']}"
         ).json()
