@@ -12,7 +12,8 @@
         "LICENSE": true,
         ".zed_history": true,
         "logo.jpg": true,
-        ".vscode": true
+        ".vscode": true,
+        ".avri_history": true
     },
     "hide-files.files": [
         ".python-version",
@@ -21,7 +22,8 @@
         "LICENSE",
         ".zed_history",
         "logo.jpg",
-        ".vscode"
+        ".vscode",
+        ".avri_history"
     ],
     "go.toolsEnvVars": {}
 }

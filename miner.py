@@ -27,13 +27,13 @@ CLEAR_LINE = '\033[2K'
 
 config = json.load(open("src/data/config.json", "r"))
 
-def CheckZedoGuard(node):
-    """Check if ZedoGuard is active"""
+def CheckAvriguard(node):
+    """Check if Avriguard is active"""
     try:
         response = requests.get(f"{node}/network/info", timeout=5)
         if response.status_code == 200:
             data = response.json()
-            return data["zedoguard"] == True
+            return data["avriguard"] == True
     except:
         pass
     return False
@@ -109,7 +109,7 @@ def check_mining_speed(node, miner_address):
 def print_speed_warning(hash_rate, current_diff):
     """Show warning about mining too fast"""
     print(f"{COLORS['yellow']}⚠  WARNING: High hash rate detected! {format_hash_rate(hash_rate)}")
-    print(f"   Your miner may trigger ZedoGuard difficulty increases")
+    print(f"   Your miner may trigger Avriguard difficulty increases")
     print(f"   Current base difficulty: {current_diff}")
     print(f"   Consider throttling your miner to stay under 10 blocks/hour{COLORS['reset']}")
 
@@ -134,13 +134,13 @@ def format_hash_rate(hash_rate):
 def print_header(address):
     clear_screen()
     print(f"{COLORS['cyan']}╔══════════════════════════════════════════════════╗")
-    print(f"║{COLORS['yellow']}          ZEDOVIUM MINER v0.1.0 (Python)          {COLORS['cyan']}║")
+    print(f"║{COLORS['yellow']}          AVRIS MINER v0.1.0 (Python)          {COLORS['cyan']}   ║")
     print(f"║{COLORS['white']}                                                  {COLORS['cyan']}║")
     print(f"║{COLORS['white']}              Created by Babymusk                 {COLORS['cyan']}║")
     print(f"║{COLORS['white']}                                                  {COLORS['cyan']}║")
-    print(f"║{COLORS['white']}       Official miner for Zedovium Network        {COLORS['cyan']}║")
+    print(f"║{COLORS['white']}       Official miner for AVRIS Network        {COLORS['cyan']}   ║")
     print(f"╚══════════════════════════════════════════════════╝{COLORS['reset']}")
-    print(f"{COLORS['blue']}⏣  Connected to network: {COLORS['green']}Zedovium Mainnet")
+    print(f"{COLORS['blue']}⏣  Connected to network: {COLORS['green']}AVRIS Mainnet")
     print(f"{COLORS['blue']}⏣  Miner address: {COLORS['yellow']}{address}")
     print(f"{COLORS['blue']}⏣  Started at {datetime.now().strftime('%I:%M:%S')}{COLORS['reset']}")
     print("\n" + "-" * 60 + "\n")  # Separator line
@@ -170,7 +170,7 @@ def print_mining_stats(diff, hash_rate, block_height, blocks_mined):
     if blocks_mined % 5 == 0:  # Only show stats every 5 blocks
         print(f"\n{COLORS['green']}⚙  Mining info  {COLORS['white']}│ {COLORS['blue']}Difficulty: {COLORS['yellow']}{diff} {COLORS['white']}│ {COLORS['blue']}Hashrate: {COLORS['yellow']}{format_hash_rate(hash_rate)} {COLORS['white']}│ {COLORS['blue']}Height: {COLORS['yellow']}{block_height}{COLORS['reset']}")
 
-def mine(zedoguard_active):
+def mine(Avriguard_active):
     node = get_node()
     print_header(config["address"])
     miner_address = config["address"]
@@ -181,17 +181,17 @@ def mine(zedoguard_active):
         try:
         #     # Check if we're mining too fast (every 5 minutes)
         #     current_time = time.time()
-        #     if zedoguard_active:
+        #     if Avriguard_active:
         #         if current_time - last_speed_check > 300:  # 5 minutes
         #             is_too_fast, diff_info = check_mining_speed(node, miner_address)
         #             if is_too_fast:
-        #                 print(f"\n{COLORS['red']}⛔  ZEDOGUARD ACTIVE  {COLORS['white']}│ {COLORS['blue']}Your difficulty: {COLORS['yellow']}{diff_info['effective_difficulty']}x {COLORS['white']}(base: {diff_info['base_difficulty']})")
+        #                 print(f"\n{COLORS['red']}⛔  Avriguard ACTIVE  {COLORS['white']}│ {COLORS['blue']}Your difficulty: {COLORS['yellow']}{diff_info['effective_difficulty']}x {COLORS['white']}(base: {diff_info['base_difficulty']})")
         #                 print(f"{COLORS['red']}   You're mining {diff_info['current_blocks_per_hour']} blocks/hour (threshold: {diff_info['threshold']})")
         #                 print(f"{COLORS['yellow']}   Consider slowing down your miner{COLORS['reset']}\n")
         #             last_speed_check = current_time
         #         else:
         #             pass
-        #     elif not(zedoguard_active):
+        #     elif not(Avriguard_active):
         #         continue
                 
             # Get current mining info
@@ -205,7 +205,7 @@ def mine(zedoguard_active):
             
             last_proof = latest_block["proofN"]
             
-            if zedoguard_active:
+            if Avriguard_active:
                 warning = lambda rate, diff: print_speed_warning(rate, diff)
             else:
                 warning = None
@@ -252,8 +252,8 @@ def mine(zedoguard_active):
 
 if __name__ == "__main__":
     clear_screen()
-    zedoguard_active = CheckZedoGuard(get_node())
+    Avriguard_active = CheckAvriguard(get_node())
     try:
-        mine(zedoguard_active)
+        mine(Avriguard_active)
     except KeyboardInterrupt:
         print(f"{COLORS['blue']} Ctrl-C Detected... Exiting gracefully... {COLORS['reset']}")

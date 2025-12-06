@@ -2,7 +2,7 @@ import hashlib
 import secrets
 
 class AddressGen:
-    """Address Generation for ZED"""
+    """Address Generation for Avris"""
     def __init__(self, wordlist):
         self.WORDLIST = wordlist
     
@@ -25,18 +25,18 @@ class AddressGen:
         checksum = hashlib.sha256(phrase.encode()).hexdigest()[:4]
         
         return {
-            "address": f"ZED-{phrase}-{checksum}",
+            "address": f"AVRI-{phrase}-{checksum}",
             "seed": seed,  # Keep this secret!
         }
 
     #@staticmethod
     def validate(self, address):
         """Check if an address is valid"""
-        if not address.startswith("ZED-"):
+        if not address.startswith("AVRI-"):
             return False
         
         parts = address.split("-")
-        if len(parts) != 6:  # ZED + 4 words + checksum
+        if len(parts) != 6:  # AVRI + 4 words + checksum
             return False
         
         checksum = parts[-1]

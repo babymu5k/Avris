@@ -12,8 +12,8 @@ from termcolor import colored
 from src.node.addressgen import AddressGen
 
 
-class ZEDWalletCLI(cmd.Cmd):
-    """Command-line wallet interface for ZED cryptocurrency"""
+class AVRIWalletCLI(cmd.Cmd):
+    """Command-line wallet interface for AVRI cryptocurrency"""
 
     prompt = ">>> "
 
@@ -21,7 +21,7 @@ class ZEDWalletCLI(cmd.Cmd):
         super().__init__()
         self.current_wallet = None
         self.session = PromptSession(
-            history=FileHistory(".zed_history"), auto_suggest=AutoSuggestFromHistory()
+            history=FileHistory(".avri_history"), auto_suggest=AutoSuggestFromHistory()
         )
         with open("src/data/words.txt", "r") as f:
             WORDLIST = [line.strip() for line in f]
@@ -43,24 +43,22 @@ class ZEDWalletCLI(cmd.Cmd):
             "transactions",
             "blocktime",
             "unconfirmed",
-            "zedoguard",
+            "AVRIoguard",
             "estimate",
             "blocktx",
         ]
         self.completer = WordCompleter(self.commands)
         self.NODE_URL = self.getnode()
         self.clear_screen()
-        print("\nZED Cryptocurrency Wallet - Command Line Interface")
+        print("\nAVRI Cryptocurrency Wallet - Command Line Interface")
         print(
             """
-#######                                             
-     #  ###### #####   ####  #    # # #    # #    # 
-    #   #      #    # #    # #    # # #    # ##  ## 
-   #    #####  #    # #    # #    # # #    # # ## # 
-  #     #      #    # #    # #    # # #    # #    # 
- #      #      #    # #    #  #  #  # #    # #    # 
-####### ###### #####   ####    ##   #  ####  #    # v0.1.0                                         
-              """
+  A   V   V RRRR  III  SSSS 
+ A A  V   V R   R  I  S     
+AAAAA V   V RRRR   I   SSS  
+A   A  V V  R  R   I      S 
+A   A   V   R   R III SSSS   v0.1.0                                         
+    """
         )
         print(colored(f"Connected to node: {self.NODE_URL}", "blue"))
         print("Type 'help' for available commands\n")
@@ -87,9 +85,9 @@ class ZEDWalletCLI(cmd.Cmd):
         """Connect to a different node: connect [url]"""
         if arg:
             try:
-                requests.get(f"{arg}/ping").status_code == 200
-                self.NODE_URL = arg.rstrip("/")
-                print(colored(f"\nConnected to node: {self.NODE_URL}\n", "green"))
+                if requests.get(f"{arg}/ping").status_code == 200:
+                    self.NODE_URL = arg.rstrip("/")
+                    print(colored(f"\nConnected to node: {self.NODE_URL}\n", "green"))
 
             except requests.exceptions.RequestException:
                 print(
@@ -139,7 +137,7 @@ class ZEDWalletCLI(cmd.Cmd):
             print("Invalid wallet data. Please create a new wallet.")
         else:
             self.current_wallet = wallet_data
-            print("\n=== Wallet Loaded ===")
+            print("=== Wallet Loaded ===")
             print(f"Address: {wallet_data['address']}")
 
             try:
@@ -148,7 +146,7 @@ class ZEDWalletCLI(cmd.Cmd):
                 print(f"\nConnection error: {e}\n")
                 return
 
-            print(f"Balance: {balance} ZED\n")
+            print(f"Balance: {balance} AVRI\n")
 
     def _get_balance(self, address):
         """Helper method to get balance"""
@@ -172,10 +170,10 @@ class ZEDWalletCLI(cmd.Cmd):
             address = arg if arg else self.current_wallet["address"]
 
         balance = self._get_balance(address)
-        print(f"\nBalance: {balance} ZED\n")
+        print(f"\nBalance: {balance} AVRI\n")
 
     def do_send(self, arg):
-        """Send ZED to another address (memo max limit=64): send [amount] [recipient] [memo]"""
+        """Send AVRI to another address (memo max limit=64): send [amount] [recipient] [memo]"""
         if not self.current_wallet:
             print("No wallet loaded. Use 'new' or 'load' first.")
             return
@@ -205,15 +203,15 @@ class ZEDWalletCLI(cmd.Cmd):
                 print(f"Error retrieving balance: {balance}")
                 return
             if balance < amount:
-                print(f"Insufficient balance. You have {balance} ZED")
+                print(f"Insufficient balance. You have {balance} AVRI")
                 return
 
             # Confirm transaction
-            print(f"\nSending {amount} ZED to {recipient}")
-            print(colored(f"\nEstimated TX fee: {fee['fee']*amount} ZED", "yellow"))
+            print(f"\nSending {amount} AVRI to {recipient}")
+            print(colored(f"\nEstimated TX fee: {fee['fee']*amount} AVRI", "yellow"))
             print(
                 colored(
-                    f"Estimated Deduction: {amount + fee['fee']*amount} ZED", "yellow"
+                    f"Estimated Deduction: {amount + fee['fee']*amount} AVRI", "yellow"
                 )
             )
             print(f"Current Fee Percentage: {fee['current_fee_percent']}%\n")
@@ -271,15 +269,15 @@ class ZEDWalletCLI(cmd.Cmd):
                 data = response.json()
                 print("\n=== Blockchain Info ===")
                 print(f"Current height: {data.get('height', 'N/A')}")
-                print(f"Total supply: {data.get('total_supply', 'N/A')} ZED")
+                print(f"Total supply: {data.get('total_supply', 'N/A')} AVRI")
                 print(f"Current difficulty: {data.get('difficulty', 'N/A')}")
-                print(f"Block reward: {data.get('block_reward', 'N/A')} ZED")
+                print(f"Block reward: {data.get('block_reward', 'N/A')} AVRI")
                 print(f"Network Hashrate: {nethashrate}")
                 print(f"Connected nodes: {data.get('node_count', 'N/A')}")
-                print(f"ZedoGuard Threshold: {data.get('threshold', 'N/A')} blocks")
-                print(f"ZedoGuard Window: {data.get('window', 'N/A')} seconds")
-                if data.get("zedoguard"):
-                    print(f"ZedoGuard Status: {data.get('zedoguard', 'N/A')}")
+                print(f"AVRIGuard Threshold: {data.get('threshold', 'N/A')} blocks")
+                print(f"AVRIGuard Window: {data.get('window', 'N/A')} seconds")
+                if data.get("AVRIoguard"):
+                    print(f"AVRIGuard Status: {data.get('AVRIoguard', 'N/A')}")
                 else:
                     pass
                 print("-" * 29 + "\n")
@@ -344,8 +342,8 @@ class ZEDWalletCLI(cmd.Cmd):
                         )
                     else:
                         print(f"To: {tx.get('recipient', 'N/A')}")
-                    print(f"Amount: {tx.get('quantity', 'N/A')} ZED")
-                    print(f"Fee: {round(tx.get('fee', 'N/A'), 4)} ZED")
+                    print(f"Amount: {tx.get('quantity', 'N/A')} AVRI")
+                    print(f"Fee: {round(tx.get('fee', 'N/A'), 4)} AVRI")
                     # print(f"Timestamp: {tx.get('timestamp', 'N/A')}")
                     print(
                         f"Timestamp: {datetime.datetime.fromtimestamp(tx.get('timestamp', 'N/A')):%Y-%m-%d %H:%M:%S} ({tx.get('timestamp', 'N/A')})"
@@ -402,16 +400,16 @@ class ZEDWalletCLI(cmd.Cmd):
                 print(f"TXID: {transaction['txid']}")
                 print(f"From: {transaction['sender']}")
                 print(f"To: {transaction['recipient']}")
-                print(f"Amount: {transaction['quantity']} ZED")
-                print(f"Fee: {round(transaction['fee'], 4)} ZED")
+                print(f"Amount: {transaction['quantity']} AVRI")
+                print(f"Fee: {round(transaction['fee'], 4)} AVRI")
                 print(
                     f"Timestamp: {datetime.datetime.fromtimestamp(transaction['timestamp']):%Y-%m-%d %H:%M:%S} ({transaction['timestamp']})"
                 )
                 print(f"Memo: {transaction['memo']}")
                 print("-" * 80)
 
-    def do_zedoguard(self, arg):
-        """Check if you miner is going too fast and has been throttled by Zedoguard: zedoguard"""
+    def do_AVRIoguard(self, arg):
+        """Check if you miner is going too fast and has been throttled by AVRIoguard: AVRIoguard"""
         if not self.current_wallet:
             print("No wallet loaded. Use 'new' or 'load' first.")
             return
@@ -455,22 +453,22 @@ class ZEDWalletCLI(cmd.Cmd):
                     return
                 estimated_fee = amount * fee
                 txamount = amount + estimated_fee
-                print(colored(f"\nTotal transaction amount: {txamount} ZED", "blue"))
-                # print(f"\nCurrent fee: {fee} ZED")
-                print(f"Estimated fee: {round(estimated_fee, 4)} ZED")
+                print(colored(f"\nTotal transaction amount: {txamount} AVRI", "blue"))
+                # print(f"\nCurrent fee: {fee} AVRI")
+                print(f"Estimated fee: {round(estimated_fee, 4)} AVRI")
                 print(f"Fee percentage: {fee_percentage}%")
                 print(f"Mempool utilization: {fee_percent['mempool_utilization']}")
-                print(f"Total Fees in Mempool: {fee_percent['total_fees']} ZED")
+                print(f"Total Fees in Mempool: {fee_percent['total_fees']} AVRI")
 
             except ValueError:
                 print("Invalid amount")
                 return
 
         if not arg:
-            print(f"Current fee: {fee} ZED")
+            print(f"Current fee: {fee} AVRI")
             print(f"Fee percentage: {fee_percentage}%")
             print(f"Mempool utilization: {fee_percent['mempool_utilization']}")
-            print(f"Total Fees in Mempool: {fee_percent['total_fees']} ZED")
+            print(f"Total Fees in Mempool: {fee_percent['total_fees']} AVRI")
             return
 
     def do_blocktx(self, arg):
@@ -502,8 +500,8 @@ class ZEDWalletCLI(cmd.Cmd):
                         print(colored(f"To: {tx['recipient']} (you)", "blue"))
                     else:
                         print(f"To: {tx['recipient']}")
-                    print(f"Amount: {tx['amount']} ZED")
-                    print(f"Fee: {tx['fee']} ZED")
+                    print(f"Amount: {tx['amount']} AVRI")
+                    print(f"Fee: {tx['fee']} AVRI")
                     if tx.get("memo"):
                         print(f"Memo: {tx['memo']}")
                     print("-" * 80)
@@ -532,9 +530,9 @@ class ZEDWalletCLI(cmd.Cmd):
                 )
                 print(f"Difficulty: {data['difficulty']}")
                 print(f"Transactions: {data['total_transactions']}")
-                print(f"Total value moved: {data['total_value']} ZED")
-                print(f"Total fees: {data['total_fees']} ZED")
-                print(f"Miner reward: {data['miner_reward']} ZED")
+                print(f"Total value moved: {data['total_value']} AVRI")
+                print(f"Total fees: {data['total_fees']} AVRI")
+                print(f"Miner reward: {data['miner_reward']} AVRI")
                 print(f"Previous block: {data['previous_block']}")
                 print()
             else:
@@ -551,11 +549,11 @@ class ZEDWalletCLI(cmd.Cmd):
 
     def validate(self, address):
         """Check if an address is valid"""
-        if not address.startswith("ZED-"):
+        if not address.startswith("AVRI-"):
             return False
 
         parts = address.split("-")
-        if len(parts) != 6:  # ZED + 4 words + checksum
+        if len(parts) != 6:  # AVRI + 4 words + checksum
             return False
 
         checksum = parts[-1]
@@ -573,5 +571,5 @@ class ZEDWalletCLI(cmd.Cmd):
 
 
 if __name__ == "__main__":
-    wallet = ZEDWalletCLI()
+    wallet = AVRIWalletCLI()
     wallet.cmdloop()

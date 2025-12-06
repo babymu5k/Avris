@@ -8,3 +8,5 @@ src/data/config.json
 .vscode
 src/node/__pycache__
 src/data/config.json
+.avri_history
+.vscode/settings.json

@@ -101,16 +101,16 @@ class BlockChain:
         
         # Web3 compatibility
         self.CHAIN_ID = 20243
-        self.SYMBOL = "ZED"
+        self.SYMBOL = "AVRI"
         self.DECIMAL = 18
         
         self.AddressGen = AddressGen(WORDLIST)
         
-        # Zedovium Guard
+        # Avris Guard
         self.miner_stats = {}  # Track miner performance
-        self.zedoguard_threshold = 10  # Blocks per hour considered "high power"
-        self.zedoguard_window = 5 * 60  # 5 minute window for stats
-        self.zedoguard = False # Enable Zedovium Guard
+        self.avriguard_threshold = 10  # Blocks per hour considered "high power"
+        self.avriguard_window = 5 * 60  # 5 minute window for stats
+        self.avriguard = False # Enable Avris Guard
         
         #Tokens #TODO: Add later
         self.tokens = {} # Format: {token_id: {"name": str, "symbol": str, "supply": int, "creator": str, "balances": {address: amount}}}
@@ -233,7 +233,7 @@ class BlockChain:
         # Always clean up old blocks first (outside our 5-minute window)
         self.miner_stats[miner_address]['blocks'] = [
             t for t in self.miner_stats[miner_address]['blocks'] 
-            if now - t < self.zedoguard_window
+            if now - t < self.avriguard_window
             
             ]
 
@@ -245,11 +245,11 @@ class BlockChain:
         blocks_in_window = len(self.miner_stats[miner_address]['blocks'])
         
         # Reset multiplier if below threshold
-        if blocks_in_window <= self.zedoguard_threshold:
+        if blocks_in_window <= self.avriguard_threshold:
             self.miner_stats[miner_address]['multiplier'] = 1.0
         else:
             # Apply multiplier if miner is too fast
-            excess = blocks_in_window - self.zedoguard_threshold
+            excess = blocks_in_window - self.avriguard_threshold
             self.miner_stats[miner_address]['multiplier'] = 1.0 + (excess * 0.5)
             
     def get_miner_difficulty(self, miner_address):
@@ -261,16 +261,16 @@ class BlockChain:
         now = time.time()
         recent_blocks = [
             t for t in self.miner_stats[miner_address]['blocks']
-            if now - t < self.zedoguard_window
+            if now - t < self.avriguard_window
         ]
         
         # If no recent blocks, reset to normal
         if not recent_blocks:
             self.miner_stats[miner_address]['multiplier'] = 1.0
-        if self.zedoguard:
+        if self.avriguard:
             return int(self.diff * self.miner_stats[miner_address]['multiplier'])
         else:
-            return int(self.diff * 1.0)  # No multiplier if Zedovium Guard is off
+            return int(self.diff * 1.0)  # No multiplier if Avris Guard is off
     
     def adjust_difficulty(self):
         """More sophisticated difficulty adjustment algorithm"""
@@ -371,7 +371,7 @@ class BlockChain:
                 "fee": 0,
                 "txid": self.calculate_txid(time.time(), len(self.chain)),
                 "timestamp": time.time(),
-                "memo": "Total Network Fees payment"
+                "memo": "Total Network Fees Payment"
             }
             transactions.append(fee_tx)
             self.balances[self.transaction_fee_address] = self.balances.get(self.transaction_fee_address, 0) + total_fees
@@ -398,25 +398,25 @@ class BlockChain:
 
         return block
 
-    @staticmethod
-    def check_validity(block, prev_block):
+    # @staticmethod
+    # def check_validity(block, prev_block):
 
         
-        if prev_block.index + 1 != block.index:
-            return False
+    #     if prev_block.index + 1 != block.index:
+    #         return False
 
-        elif prev_block.calculate_hash != block.prev_hash:
-            return False
+    #     elif prev_block.calculate_hash != block.prev_hash:
+    #         return False
 
         
-        elif not BlockChain.verifying_proof(block.proofN,
-                                            prev_block.proofN):
-            return False
+    #     elif not BlockChain.verifying_proof(block.proofN,
+    #                                         prev_block.proofN):
+    #         return False
 
-        elif block.timestamp <= prev_block.timestamp:
-            return False
+    #     elif block.timestamp <= prev_block.timestamp:
+    #         return False
 
-        return True
+    #     return True
 
     def calculate_txid(self, timestamp, index):
         tx_string = "{}{}".format(timestamp, index)
@@ -572,7 +572,7 @@ class BlockChain:
         block = self.construct_block(proofN, last_hash)
         self.balances[details_miner] = self.balances.get(details_miner, 0) + self.rewards
         
-        print(colored(f"\n-----------\nNew Block mined!\nHeight: {len(self.chain)}\nMiner: {details_miner}\nReward: {self.rewards} ZED \n-----------\n", "green"))
+        print(colored(f"\n-----------\nNew Block mined!\nHeight: {len(self.chain)}\nMiner: {details_miner}\nReward: {self.rewards} AVRI \n-----------\n", "green"))
         return block
 
     def create_node(self, address):
@@ -652,9 +652,9 @@ async def get_network_info(request):
         "difficulty": blockchain.diff,
         "block_reward": blockchain.rewards,
         "node_count": len(blockchain.nodes),
-        "threshold": blockchain.zedoguard_threshold,
-        "window": blockchain.zedoguard_window,
-        "zedoguard": blockchain.zedoguard,
+        "threshold": blockchain.avriguard_threshold,
+        "window": blockchain.avriguard_window,
+        "avriguard": blockchain.avriguard,
     })
 
 @app.get("/network/chain")
@@ -808,7 +808,7 @@ async def get_network_hashrate(request):
 #     return json({
 #         "fee_percentage": blockchain.mempool.get_current_fee_percent(),
 #         "description": f"Fixed {round(blockchain.mempool.get_current_fee_percent()*100, 2)}% fee on all transactions",
-#         "distribution": "Zedovium Development Fund",
+#         "distribution": "Avris Development Fund",
 #     })
 
 @app.get("/network/fee_estimate")
@@ -851,7 +851,7 @@ async def check_address_difficulty(request, address):
         }, status=400)
         
     # Check if address has mining stats
-    if address in blockchain.miner_stats and blockchain.zedoguard:
+    if address in blockchain.miner_stats and blockchain.avriguard:
         stats = blockchain.miner_stats[address]
         current_bph = len(stats['blocks'])
         if stats['multiplier'] > 1.0:
@@ -866,40 +866,40 @@ async def check_address_difficulty(request, address):
             "message": message,
             "difficulty_multiplier": stats['multiplier'],
             "current_blocks_per_hour": current_bph,
-            "threshold": blockchain.zedoguard_threshold,
+            "threshold": blockchain.avriguard_threshold,
             "base_difficulty": blockchain.diff,
             "effective_difficulty": blockchain.get_miner_difficulty(address)
         })
 
-    elif address not in blockchain.miner_stats and blockchain.zedoguard:
+    elif address not in blockchain.miner_stats and blockchain.avriguard:
         return json({
             "status": "normal",
             "message": "Address has normal difficulty (no mining activity detected)",
             "difficulty_multiplier": 1.0,
             "current_blocks_per_hour": 0,
-            "threshold": blockchain.zedoguard_threshold
+            "threshold": blockchain.avriguard_threshold
         })
         
-    elif address in blockchain.miner_stats and blockchain.zedoguard == False:
+    elif address in blockchain.miner_stats and blockchain.avriguard == False:
         stats = blockchain.miner_stats[address]
         current_bph = len(stats['blocks'])   
         return json({
             "status": "normal",
-            "message": "Zedovium Guard is disabled. No difficulty checks.",
+            "message": "Avris Guard is disabled. No difficulty checks.",
             "difficulty_multiplier": 0,
             "current_blocks_per_hour": current_bph,
-            "threshold": blockchain.zedoguard_threshold,
+            "threshold": blockchain.avriguard_threshold,
             "base_difficulty": blockchain.diff,
             "effective_difficulty": blockchain.get_miner_difficulty(address)
         })
         
-    elif address not in blockchain.miner_stats and blockchain.zedoguard == False:
+    elif address not in blockchain.miner_stats and blockchain.avriguard == False:
         return json({
             "status": "normal",
-            "message": "Zedovium Guard is disabled. No mining activity detected.",
+            "message": "Avris Guard is disabled. No mining activity detected.",
             "difficulty_multiplier": 0,
             "current_blocks_per_hour": 0,
-            "threshold": blockchain.zedoguard_threshold,
+            "threshold": blockchain.avriguard_threshold,
             "base_difficulty": blockchain.diff,
             "effective_difficulty": blockchain.get_miner_difficulty(address)
         })
@@ -1149,7 +1149,7 @@ async def new_block(request):
     
     # Remove transactions from mempool
     blockchain.mempool.remove_confirmed(block.transactions)
-    print(colored(f"\n-----------\nNew Block mined!\nHeight: {len(blockchain.chain)}\nReward: {blockchain.rewards} ZED \n-----------\n", "green"))
+    print(colored(f"\n-----------\nNew Block mined!\nHeight: {len(blockchain.chain)}\nReward: {blockchain.rewards} AVRI \n-----------\n", "green"))
     return json({"status": "success"})
 
 @app.get("/network/peers")
@@ -1211,21 +1211,23 @@ app.add_task(network_maintenance())
 
 class Web3RPC:
     @staticmethod
-    def zed_to_eth(address):
-        """Convert ZED-address to 0x-format"""
-        if address.startswith("ZED-"):
-            # Take the first part of the ZED address and pad with zeros
-            clean_hex = address.replace("ZED-", "").replace("-", "")[:40]
+    def AVRI_to_eth(address):
+        """Convert AVRI-address to 0x-format"""
+        if address.startswith("AVRI-"):
+            # Take the first part of the AVRI address and pad with zeros
+            clean_hex = address.replace("AVRI-", "").replace("-", "")[:40]
             return Web3.to_checksum_address("0x" + clean_hex.ljust(40, '0'))
         return address
 
     @staticmethod
-    def eth_to_zed(address):
-        """Convert 0x-address to ZED-format"""
+    def eth_to_AVRI(address):
+        """Convert 0x-address to AVRI-format"""
+        print(address)
         if address.startswith("0x"):
             clean_hex = address[2:]
-            # Reconstruct ZED address format from the hex
-            return f"ZED-{clean_hex[:8]}-{clean_hex[8:16]}-{clean_hex[16:24]}-{clean_hex[24:32]}"
+            # Reconstruct AVRI address format from the hex
+            return f"AVRI-{clean_hex[:8]}-{clean_hex[8:16]}-{clean_hex[16:24]}-{clean_hex[24:32]}"
+        print(address)
         return address
 
     @staticmethod
@@ -1252,7 +1254,7 @@ class Web3RPC:
             elif method == "eth_getBalance":
                 if len(params) < 2:
                     raise ValueError("Missing parameters")
-                address = Web3RPC.eth_to_zed(params[0])
+                address = Web3RPC.eth_to_AVRI(params[0])
                 balance = blockchain.get_balance(address)
                 print(params[0])
                 print(address)
@@ -1262,7 +1264,7 @@ class Web3RPC:
             elif method == "eth_getTransactionCount":
                 if len(params) < 2:
                     raise ValueError("Missing parameters")
-                address = Web3RPC.eth_to_zed(params[0])
+                address = Web3RPC.eth_to_AVRI(params[0])
                 # In your system, we'll use the number of outgoing transactions as nonce
                 # This is a simplification - you might need to track nonces properly
                 count = 0
@@ -1298,8 +1300,8 @@ class Web3RPC:
                     for tx in block.transactions:
                         transactions.append({
                             "hash": tx.get('txid', '0x' + secrets.token_hex(32)),
-                            "from": Web3RPC.zed_to_eth(tx['sender']),
-                            "to": Web3RPC.zed_to_eth(tx['recipient']),
+                            "from": Web3RPC.AVRI_to_eth(tx['sender']),
+                            "to": Web3RPC.AVRI_to_eth(tx['recipient']),
                             "value": Web3RPC.to_hex(int(tx['quantity'] * (10 ** blockchain.DECIMAL))),
                             "gas": Web3RPC.to_hex(21000),  # Standard gas for simple transfer
                             "gasPrice": Web3RPC.to_hex(1),  # Minimal gas price
@@ -1320,7 +1322,7 @@ class Web3RPC:
                     "logsBloom": "0x" + "0"*512,
                     "transactionsRoot": "0x" + "0"*64,
                     "stateRoot": "0x" + "0"*64,
-                    "miner": Web3RPC.zed_to_eth("node"),  # Your system uses "node" as miner
+                    "miner": Web3RPC.AVRI_to_eth("node"),  # Your system uses "node" as miner
                     "difficulty": Web3RPC.to_hex(blockchain.diff),
                     "totalDifficulty": Web3RPC.to_hex(blockchain.diff * (block.index + 1)),
                     "extraData": "0x",
@@ -1337,8 +1339,8 @@ class Web3RPC:
                     raise ValueError("Missing parameters")
                 
                 tx_data = params[0]
-                sender = Web3RPC.eth_to_zed(tx_data.get('from'))
-                recipient = Web3RPC.eth_to_zed(tx_data.get('to'))
+                sender = Web3RPC.eth_to_AVRI(tx_data.get('from'))
+                recipient = Web3RPC.eth_to_AVRI(tx_data.get('to'))
                 value = int(tx_data.get('value', '0x0'), 16) / (10 ** blockchain.DECIMAL)
                 
                 # In a real implementation, you'd need to:

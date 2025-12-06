@@ -1,7 +1,7 @@
-# **Zedovium Blockchain Documentation**  
+# **Avris Blockchain Documentation**  
 
 ## **📌 Overview**  
-Zedovium is a **Proof-of-Work (PoW) blockchain** with dynamic transaction fees, miner difficulty adjustments, and a unique **Zedovium Guard** mechanism to prevent mining centralization . This document explains all network endpoints, economic rules, and security features in detail. This is still under heavy development!
+Avris is a **Proof-of-Work (PoW) blockchain** with dynamic transaction fees, miner difficulty adjustments, and a unique **AvriGuard** mechanism to prevent mining centralization . This document explains all network endpoints, economic rules, and security features in detail. This is still under heavy development!
 
 ---
 
@@ -39,6 +39,10 @@ Zedovium is a **Proof-of-Work (PoW) blockchain** with dynamic transaction fees, 
   - If blocks are too fast → **Increase difficulty**  
   - If blocks are too slow → **Decrease difficulty**  
 
+### **4. Members are incentivised to run a Node**
+- **Nodes that process a transaction are rewarded with the transaction fee**
+- Providing the network a different way to earn AVRI other than mining
+
 ---
 
 ## **📡 Network & API Endpoints**  
@@ -75,7 +79,7 @@ Zedovium is a **Proof-of-Work (PoW) blockchain** with dynamic transaction fees, 
 | `GET /wallet/validate/<addr>` | Check if address is valid |  
 | `GET /user/balance/<addr>` | Get balance for an address |  
 
-### **🔹 Zedovium Guard**  
+### **🔹 Avris Guard**  
 | Endpoint | Description |  
 |----------|-------------|  
 | `GET /network/checkaddrdiff/<addr>` | Check if miner is under high difficulty |  
@@ -85,7 +89,7 @@ Zedovium is a **Proof-of-Work (PoW) blockchain** with dynamic transaction fees, 
 ## **⚙️ Technical Details**  
 
 ### **📌 Address Generation**  
-- **Format**: `ZED-[4 words]-[checksum]` (e.g., `ZED-sunset-cat-moon-tree-1a3f`)  
+- **Format**: `AVRI-[4 words]-[checksum]` (e.g., `AVRI-sunset-cat-moon-tree-1a3f`)  
 - **Derived from**:  
   - BIP-39 wordlist (`words.txt`)  
   - SHA-256 hashing of seed  
@@ -99,14 +103,14 @@ Zedovium is a **Proof-of-Work (PoW) blockchain** with dynamic transaction fees, 
 ---
 
 ## **🔒 Security Notes**  
-- **Zedovium Guard** prevents 51% attacks by penalizing fast miners.  
+- **Avris Guard** prevents 51% attacks by penalizing fast miners.  
 - **Dynamic fees** reduce spam transactions.  
 - **Seed phrases** must be kept secure (wallet recovery depends on them).  
 
 ## **🔐 Security & Anti-Centralization**  
 
 
-### **Zedovium Guard Mechanism**  
+### **Avris Guard Mechanism**  
 
 - **Purpose**: Prevent mining monopolies. 
 
@@ -124,17 +128,17 @@ Zedovium is a **Proof-of-Work (PoW) blockchain** with dynamic transaction fees, 
 
 ---
 
-## **💰 Tokenomics (ZED Coin)**  
+## **💰 Tokenomics (AVRI Coin)**  
 
 | **Parameter** | **Value** | **Description** |  
 |--------------|----------|----------------|  
-| **Block Reward** | 80 ZED | New coins per block |  
+| **Block Reward** | 80 AVRI | New coins per block |  
 | **Transaction Fee** | 1%–5% | Dynamic, scales with demand |  
 | **Max Supply** | Uncapped (for now) | Adjustable via governance |  
 
 📌 **Key Insight**:  
-- Miners earn **80 ZED** per block.  
-- Fees **do not burn**—they go to a **Zedovium Developer Fund** (basically my wallet XD)
+- Miners earn **80 AVRI** per block.  
+- Fees **do not burn**—they go to the **node that processed the transaction** 
 
 ---
 
@@ -145,7 +149,7 @@ GNU General Public License v3.0
 
 ### **🎯 Summary**  
 ✅ **Dynamic fees** prevent congestion exploitation  
-✅ **Zedovium Guard** keeps mining decentralized  
+✅ **Avris Guard** keeps mining decentralized  
 ✅ **BLAKE2b** ensures fast & secure hashing  
 ✅ **Partial Web3 RPC** currently implementing support for compatibility  
 
