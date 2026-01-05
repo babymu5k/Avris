@@ -8,7 +8,7 @@ Avris is a **Proof-of-Work (PoW) blockchain** with dynamic transaction fees, min
 ## **🔗 Core Features**  
 
 ### **1. Dynamic Transaction Fees**  
-- **Fee Range** 1% (min) to 5% (max) of transaction value 
+- **Fee Range** 0.1% (min) to 1% (max) of transaction value 
 
 - **Adjustment Mechanism**
   - Fee scales **linearly** with mempool congestion  
@@ -19,10 +19,11 @@ Avris is a **Proof-of-Work (PoW) blockchain** with dynamic transaction fees, min
   - Rounded to nearest **0.1%** increment for cleaner UX  
 
 - **Mempool Impact**
-  - Higher fees incentivize miners to prioritize transactions during congestion  
-  - Lower fees when mempool is empty (1% floor)  
+  - Higher fees incentivize miners to prioritize transactions during congestion.
+  - Lower fees when mempool is empty (1% floor)
+- **Miners are encouraged to keep mining and secure the network.**
 
-### **2. Hashing Algorithm (BLAKE2b)**  
+### **2. Hashing Algorithm (Grøstl)**  
 
 - Used for
   - **Block hashing** (`calculate_hash` in `Block` class)  
@@ -38,10 +39,6 @@ Avris is a **Proof-of-Work (PoW) blockchain** with dynamic transaction fees, min
 - **Formula**:  
   - If blocks are too fast → **Increase difficulty**  
   - If blocks are too slow → **Decrease difficulty**  
-
-### **4. Members are incentivised to run a Node**
-- **Nodes that process a transaction are rewarded with the transaction fee**
-- Providing the network a different way to earn AVRI other than mining
 
 ---
 
@@ -134,11 +131,46 @@ Avris is a **Proof-of-Work (PoW) blockchain** with dynamic transaction fees, min
 |--------------|----------|----------------|  
 | **Block Reward** | 80 AVRI | New coins per block |  
 | **Transaction Fee** | 1%–5% | Dynamic, scales with demand |  
-| **Max Supply** | Uncapped (for now) | Adjustable via governance |  
+| **Max Supply** | 67,200,000 | Adjustable via governance |
+| **Block Halving** | Halves every 420,000 blocks | Halving events occur roughly every 4 years |
+
+## Block Halving Events
+| **Era** | **Block Range** | **Reward per Block** | **Total Coins from Era**|
+|------------------|----------|-------------------|-----------------------|   
+| 1 | 0 to 419,999 | 80 | ~33,600,000 |
+| 2 | 420,000 to 839,999 | 40 | ~16,800,000 |
+| 3 | 840,000 to 1,259,999 | 20 | ~8,400,000 |
+| 4 | 1,260,000 to 1,679,999 | 10 | ~4,200,000 |
+| 5 | 1,680,000 to 2,099,999 | 5 | ~2,100,000 |
+
+
+## **Avris Unique Dual Chain system**
+- Avris implements a dual-layer mining system where two types of devices mine different layers of the same blockchain:
+- In order to remain decentralised whilst still allowing low power arduinos to mine we have come up with this solution
+---
+
+### Main Chain (PC/GPU Miners)
+
+| Feature | Description |
+|--------|-------------|
+| **Algorithm** | Grøstl Proof-of-Work |
+| **Block Target** | 5 minutes |
+| **Block Rewards** | 80 AVR → halves every 420,000 blocks |
+| **Role** | Secures the entire network |
+| **Relation to Mini-Chain** | Embeds Mini-Chain Merkle Root |
+
+### MiniAVR chain (Arduino/ESP Miners)
+
+| Feature | Description |
+|--------|-------------|
+| **Algorithm** | SHA-1 Proof-of-Work |
+| **Block Target** | ~30 seconds |
+| **Reward** | Fixed 1 AVR per mini-block |
+
 
 📌 **Key Insight**:  
-- Miners earn **80 AVRI** per block.  
-- Fees **do not burn**—they go to the **node that processed the transaction** 
+- PC Miners earn **80 AVRI** per block(Plus any address to address transaction fees).  
+- Fees **do not burn**—they go to the **miner that sucessfully solved the block** 
 
 ---
 
@@ -150,7 +182,7 @@ GNU General Public License v3.0
 ### **🎯 Summary**  
 ✅ **Dynamic fees** prevent congestion exploitation  
 ✅ **Avris Guard** keeps mining decentralized  
-✅ **BLAKE2b** ensures fast & secure hashing  
+✅ **Grøstl** ensures fast & asic resistant hashing  
 ✅ **Partial Web3 RPC** currently implementing support for compatibility  
 
 For more details, check the [OpenAPI spec](#) (if implemented).

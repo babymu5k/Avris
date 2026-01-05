@@ -1,0 +1,25 @@
+/home/jamil/Documents/projects/Avris/arduino_code/build/sketch/backend.cpp.o: \
+ /home/jamil/Documents/projects/Avris/arduino_code/build/sketch/backend.cpp \
+ /home/jamil/Documents/projects/Avris/arduino_code/build/sketch/config.h \
+ /home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha256/default.h \
+ /home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha1/default.h \
+ /home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha256/constants.c \
+ /home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha256/constants.h \
+ /home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha256/default.h \
+ /home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha256/hash.c \
+ /home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha256/hash.h \
+ /home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha256/types.h \
+ /home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha256/basic.h \
+ /home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha256/types.c \
+ /home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha256/sha256.c \
+ /home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha256/sha256.h \
+ /home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha1/constants.c \
+ /home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha1/constants.h \
+ /home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha1/default.h \
+ /home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha1/hash.c \
+ /home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha1/hash.h \
+ /home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha1/types.h \
+ /home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha1/basic.h \
+ /home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha1/types.c \
+ /home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha1/sha1.c \
+ /home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha1/sha1.h

@@ -1,0 +1,1943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avris Blockchain Explorer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #1abc9c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --gray: #7f8c8d;
+            --border-radius: 8px;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            color: var(--accent);
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        nav a:hover, nav a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .node-url {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+        }
+
+        .node-url input {
+            background: transparent;
+            border: none;
+            color: white;
+            outline: none;
+            width: 250px;
+        }
+
+        .node-url input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .node-url button {
+            background: var(--accent);
+            border: none;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .node-url button:hover {
+            background: #16a085;
+        }
+
+        /* Main Content */
+        main {
+            padding: 2rem 0;
+            min-height: calc(100vh - 200px);
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .card-header h3 {
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .card-header i {
+            color: var(--accent);
+            font-size: 1.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 0.5rem 0;
+        }
+
+        .stat-desc {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        thead {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .hash {
+            font-family: monospace;
+            color: var(--secondary);
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .address {
+            font-family: monospace;
+            color: var(--accent);
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .amount {
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        .txid {
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--gray);
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Search */
+        .search-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            border-color: var(--accent);
+        }
+
+        .search-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .search-btn:hover {
+            background: #16a085;
+        }
+
+        /* Status indicators */
+        .status {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status.confirmed {
+            background-color: #d5f4e6;
+            color: var(--success);
+        }
+
+        .status.pending {
+            background-color: #fef9e7;
+            color: var(--warning);
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+            gap: 0.5rem;
+        }
+
+        .pagination button {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .pagination button:hover {
+            background: #f5f5f5;
+        }
+
+        .pagination button.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 2rem;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-links a {
+            color: #bbb;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem;
+            font-size: 1.2rem;
+            color: var(--gray);
+        }
+
+        .loading i {
+            margin-right: 10px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .node-url input {
+                width: 200px;
+            }
+
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab:hover {
+            background: #f9f9f9;
+        }
+
+        .tab.active {
+            border-bottom: 3px solid var(--accent);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* Hidden class */
+        .hidden {
+            display: none;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+            gap: 0.3rem;
+            flex-wrap: wrap;
+        }
+
+        .pagination button {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 0.5rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+            min-width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pagination button:hover {
+            background: #f5f5f5;
+            border-color: var(--accent);
+        }
+
+        .pagination button.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            font-weight: 600;
+        }
+
+        .pagination span {
+            display: flex;
+            align-items: center;
+            padding: 0 0.5rem;
+            color: var(--gray);
+        }
+
+        .page-info {
+            text-align: center;
+            margin-top: 0.5rem;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-cube"></i>
+                <h1>Avris <span>Explorer</span></h1>
+            </div>
+            
+            <nav>
+                <ul>
+                    <li><a href="#" class="active" data-page="dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="#" data-page="blocks"><i class="fas fa-cubes"></i> Blocks</a></li>
+                    <li><a href="#" data-page="transactions"><i class="fas fa-exchange-alt"></i> Transactions</a></li>
+                    <li><a href="#" data-page="network"><i class="fas fa-globe"></i> Network</a></li>
+                    <li><a href="#" data-page="search"><i class="fas fa-search"></i> Search</a></li>
+                </ul>
+            </nav>
+            
+            <div class="node-url">
+                <i class="fas fa-server"></i>
+                <input type="text" id="nodeUrl" placeholder="http://localhost:8000" value="http://localhost:8000">
+                <button id="connectBtn">Connect</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Dashboard Page -->
+        <section id="dashboard-page">
+            <h2><i class="fas fa-tachometer-alt"></i> Network Dashboard</h2>
+            <div class="dashboard">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Current Height</h3>
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <div class="stat-value" id="height">0</div>
+                    <div class="stat-desc">Latest block index</div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Total Supply</h3>
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <div class="stat-value" id="supply">0</div>
+                    <div class="stat-desc">AVR in circulation</div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Difficulty</h3>
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <div class="stat-value" id="difficulty">0</div>
+                    <div class="stat-desc">Current mining difficulty</div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Node Count</h3>
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <div class="stat-value" id="nodeCount">0</div>
+                    <div class="stat-desc">Connected nodes</div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Block Reward</h3>
+                        <i class="fas fa-gem"></i>
+                    </div>
+                    <div class="stat-value" id="reward">0</div>
+                    <div class="stat-desc">Reward per block</div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Hash Rate</h3>
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div class="stat-value" id="hashrate">0</div>
+                    <div class="stat-desc">Network hash power</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Latest Blocks</h3>
+                    <i class="fas fa-history"></i>
+                </div>
+                <div class="table-container">
+                    <table id="latest-blocks">
+                        <thead>
+                            <tr>
+                                <th>Height</th>
+                                <th>Hash</th>
+                                <th>Transactions</th>
+                                <th>Timestamp</th>
+                                <th>Miner</th>
+                            </tr>
+                        </thead>
+                        <tbody id="latest-blocks-body">
+                            <!-- Filled by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="card" style="margin-top: 1.5rem;">
+                <div class="card-header">
+                    <h3>Recent Transactions</h3>
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                <div class="table-container">
+                    <table id="latest-transactions">
+                        <thead>
+                            <tr>
+                                <th>TXID</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="latest-transactions-body">
+                            <!-- Filled by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Blocks Page -->
+        <section id="blocks-page" class="hidden">
+            <h2><i class="fas fa-cubes"></i> Blocks</h2>
+            
+            <div class="tabs">
+                <div class="tab active" data-block-tab="latest">Latest Blocks</div>
+                <div class="tab" data-block-tab="search">Search Block</div>
+            </div>
+            
+            <div id="latest-blocks-tab">
+                <div class="table-container">
+                    <table id="all-blocks">
+                        <thead>
+                            <tr>
+                                <th>Height</th>
+                                <th>Hash</th>
+                                <th>Transactions</th>
+                                <th>Timestamp</th>
+                                <th>Size</th>
+                                <th>Miner</th>
+                            </tr>
+                        </thead>
+                        <tbody id="all-blocks-body">
+                            <!-- Filled by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination" id="blocks-pagination">
+                    <!-- Filled by JavaScript -->
+                </div>
+            </div>
+            
+            <div id="search-block-tab" class="hidden">
+                <div class="search-container">
+                    <input type="text" id="block-search-input" class="search-input" placeholder="Enter block height or hash...">
+                    <button id="block-search-btn" class="search-btn">Search Block</button>
+                </div>
+                <div id="block-details">
+                    <!-- Block details will appear here -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- Transactions Page -->
+        <section id="transactions-page" class="hidden">
+            <h2><i class="fas fa-exchange-alt"></i> Transactions</h2>
+            
+            <div class="tabs">
+                <div class="tab active" data-tx-tab="latest">Recent Transactions</div>
+                <div class="tab" data-tx-tab="search">Search Transaction</div>
+                <div class="tab" data-tx-tab="address">Address Lookup</div>
+            </div>
+            
+            <div id="latest-transactions-tab">
+                <div class="table-container">
+                    <table id="all-transactions">
+                        <thead>
+                            <tr>
+                                <th>TXID</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Amount</th>
+                                <th>Fee</th>
+                                <th>Block</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="all-transactions-body">
+                            <!-- Filled by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination" id="transactions-pagination">
+                    <!-- Filled by JavaScript -->
+                </div>
+            </div>
+            
+            <div id="search-transaction-tab" class="hidden">
+                <div class="search-container">
+                    <input type="text" id="tx-search-input" class="search-input" placeholder="Enter transaction ID...">
+                    <button id="tx-search-btn" class="search-btn">Search Transaction</button>
+                </div>
+                <div id="transaction-details">
+                    <!-- Transaction details will appear here -->
+                </div>
+            </div>
+            
+            <div id="address-lookup-tab" class="hidden">
+                <div class="search-container">
+                    <input type="text" id="address-input" class="search-input" placeholder="Enter address...">
+                    <button id="address-search-btn" class="search-btn">Lookup Address</button>
+                </div>
+                <div id="address-details">
+                    <!-- Address details will appear here -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- Network Page -->
+        <section id="network-page" class="hidden">
+            <h2><i class="fas fa-globe"></i> Network Information</h2>
+            
+            <div class="dashboard">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Network Status</h3>
+                        <i class="fas fa-signal"></i>
+                    </div>
+                    <div id="network-status">Loading...</div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Avris Guard</h3>
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div id="avris-guard">Loading...</div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Fee Structure</h3>
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <div id="fee-info">Loading...</div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Mempool</h3>
+                        <i class="fas fa-inbox"></i>
+                    </div>
+                    <div id="mempool-info">Loading...</div>
+                </div>
+            </div>
+            
+            <div class="card" style="margin-top: 1.5rem;">
+                <div class="card-header">
+                    <h3>Connected Nodes</h3>
+                    <i class="fas fa-network-wired"></i>
+                </div>
+                <div id="nodes-list">Loading...</div>
+            </div>
+        </section>
+        
+        <!-- Search Page -->
+        <section id="search-page" class="hidden">
+            <h2><i class="fas fa-search"></i> Blockchain Search</h2>
+            
+            <div class="search-container">
+                <input type="text" id="global-search-input" class="search-input" placeholder="Search by address, transaction ID, block height, or block hash...">
+                <button id="global-search-btn" class="search-btn">Search</button>
+            </div>
+            
+            <div id="search-results">
+                <div class="loading" id="search-loading">
+                    <i class="fas fa-spinner"></i> Enter a search term above
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <div class="copyright">
+                <p>Avris Blockchain Explorer v1.0</p>
+                <p>Powered by your Avris Node</p>
+            </div>
+            <div class="footer-links">
+                <a href="#" id="refresh-data"><i class="fas fa-sync-alt"></i> Refresh Data</a>
+                <a href="#" id="api-docs"><i class="fas fa-code"></i> API Docs</a>
+                <a href="#" id="about"><i class="fas fa-info-circle"></i> About</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Configuration
+        let currentNodeUrl = 'http://localhost:4024';
+        let currentPage = 'dashboard';
+        let blocksPerPage = 10;
+        let transactionsPerPage = 10;
+        let currentBlockPage = 1;
+        let currentTransactionPage = 1;
+        
+        // DOM Elements
+        const nodeUrlInput = document.getElementById('nodeUrl');
+        const connectBtn = document.getElementById('connectBtn');
+        const refreshBtn = document.getElementById('refresh-data');
+        const pageSections = document.querySelectorAll('main > section');
+        const navLinks = document.querySelectorAll('nav a');
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load saved node URL from localStorage
+            const savedUrl = localStorage.getItem('avrisNodeUrl');
+            if (savedUrl) {
+                nodeUrlInput.value = savedUrl;
+                currentNodeUrl = savedUrl;
+            }
+            
+            // Connect to node
+            connectToNode();
+            
+            // Set up event listeners
+            connectBtn.addEventListener('click', connectToNode);
+            nodeUrlInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') connectToNode();
+            });
+            
+            refreshBtn.addEventListener('click', function() {
+                loadPageData(currentPage);
+            });
+            
+            // Navigation
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.getAttribute('data-page');
+                    switchPage(page);
+                });
+            });
+            
+            // Tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabContainer = this.closest('.tabs');
+                    const targetId = this.getAttribute('data-block-tab') || 
+                                    this.getAttribute('data-tx-tab') || 
+                                    this.getAttribute('data-network-tab');
+                    
+                    // Update active tab
+                    tabContainer.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show corresponding content
+                    if (this.getAttribute('data-block-tab')) {
+                        document.getElementById('latest-blocks-tab').classList.add('hidden');
+                        document.getElementById('search-block-tab').classList.add('hidden');
+                        document.getElementById(`${targetId}-block-tab`).classList.remove('hidden');
+                        
+                        if (targetId === 'latest') {
+                            loadBlocks();
+                        }
+                    }
+                    
+                    if (this.getAttribute('data-tx-tab')) {
+                        document.getElementById('latest-transactions-tab').classList.add('hidden');
+                        document.getElementById('search-transaction-tab').classList.add('hidden');
+                        document.getElementById('address-lookup-tab').classList.add('hidden');
+                        document.getElementById(`${targetId}-transaction-tab`).classList.remove('hidden');
+                        
+                        if (targetId === 'latest') {
+                            loadTransactions();
+                        }
+                    }
+                });
+            });
+            
+            // Search functionality
+            document.getElementById('block-search-btn').addEventListener('click', searchBlock);
+            document.getElementById('tx-search-btn').addEventListener('click', searchTransaction);
+            document.getElementById('address-search-btn').addEventListener('click', searchAddress);
+            document.getElementById('global-search-btn').addEventListener('click', globalSearch);
+            
+            // Enter key for search inputs
+            ['block-search-input', 'tx-search-input', 'address-input', 'global-search-input'].forEach(id => {
+                document.getElementById(id).addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        if (id === 'block-search-input') searchBlock();
+                        if (id === 'tx-search-input') searchTransaction();
+                        if (id === 'address-input') searchAddress();
+                        if (id === 'global-search-input') globalSearch();
+                    }
+                });
+            });
+            
+            // About and API Docs
+            document.getElementById('api-docs').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('API endpoints are available at:\n\n' +
+                      'GET /network/info - Network information\n' +
+                      'GET /network/chain - Full blockchain\n' +
+                      'GET /network/latestblock - Latest block\n' +
+                      'GET /network/block/<height> - Block by height\n' +
+                      'GET /network/transactionbyid/<txid> - Transaction by ID\n' +
+                      'GET /network/transactions/<address> - Transactions for address\n' +
+                      'And many more...');
+            });
+            
+            document.getElementById('about').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('Avris Blockchain Explorer v1.0\n\n' +
+                      'A simple, frontend-only blockchain explorer for the Avris cryptocurrency.\n' +
+                      'This explorer connects directly to your Avris node API.\n\n' +
+                      'No backend server or database required!');
+            });
+        });
+        
+        // Connect to node
+        async function connectToNode() {
+            const url = nodeUrlInput.value.trim();
+            if (!url) {
+                alert('Please enter a node URL');
+                return;
+            }
+            
+            // Test connection with ping
+            try {
+                const response = await fetch(`${url}/ping`);
+                if (!response.ok) throw new Error('Node not responding');
+                
+                currentNodeUrl = url;
+                localStorage.setItem('avrisNodeUrl', url);
+                
+                // Load dashboard data
+                switchPage('dashboard');
+                
+                showNotification('Connected to node successfully!', 'success');
+            } catch (error) {
+                showNotification(`Failed to connect: ${error.message}`, 'error');
+            }
+        }
+        
+        // Switch between pages
+        function switchPage(page) {
+            // Update navigation
+            navLinks.forEach(link => {
+                if (link.getAttribute('data-page') === page) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+            
+            // Show selected page, hide others
+            pageSections.forEach(section => {
+                if (section.id === `${page}-page`) {
+                    section.classList.remove('hidden');
+                } else {
+                    section.classList.add('hidden');
+                }
+            });
+            
+            currentPage = page;
+            loadPageData(page);
+        }
+        
+        // Load data for current page
+        async function loadPageData(page) {
+            switch(page) {
+                case 'dashboard':
+                    await loadDashboard();
+                    break;
+                case 'blocks':
+                    await loadBlocks();
+                    break;
+                case 'transactions':
+                    await loadTransactions();
+                    break;
+                case 'network':
+                    await loadNetworkInfo();
+                    break;
+                case 'search':
+                    // Nothing to load initially
+                    break;
+            }
+        }
+        
+        // Load dashboard data
+        async function loadDashboard() {
+            try {
+                // Load network info
+                const networkInfo = await fetchJSON(`${currentNodeUrl}/network/info`);
+                
+                // Update stats
+                document.getElementById('height').textContent = networkInfo.height;
+                document.getElementById('supply').textContent = formatNumber(networkInfo.total_supply);
+                document.getElementById('difficulty').textContent = networkInfo.difficulty;
+                document.getElementById('nodeCount').textContent = networkInfo.node_count;
+                document.getElementById('reward').textContent = networkInfo.block_reward;
+                
+                // Load hashrate
+                try {
+                    const hashrateData = await fetchJSON(`${currentNodeUrl}/network/hashrate`);
+                    document.getElementById('hashrate').textContent = hashrateData.hashrate_human || formatHashrate(hashrateData.hashrate);
+                } catch (e) {
+                    document.getElementById('hashrate').textContent = 'N/A';
+                }
+                
+                // Load latest blocks
+                const blocks = await fetchJSON(`${currentNodeUrl}/network/blocks?count=5`);
+                const blocksBody = document.getElementById('latest-blocks-body');
+                blocksBody.innerHTML = '';
+                
+                blocks.blocks.forEach(block => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><a href="#" class="view-block" data-height="${block.index}">${block.index}</a></td>
+                        <td class="hash" title="${block.hash}">${shortenHash(block.hash)}</td>
+                        <td>${block.transactions ? block.transactions.length : 0}</td>
+                        <td>${formatTimestamp(block.timestamp)}</td>
+                        <td class="address" title="${findMiner(block)}">${shortenAddress(findMiner(block))}</td>
+                    `;
+                    blocksBody.appendChild(row);
+                });
+                
+                // Load latest transactions
+                const transactions = await fetchJSON(`${currentNodeUrl}/network/transactions?count=5`);
+                const txsBody = document.getElementById('latest-transactions-body');
+                txsBody.innerHTML = '';
+                
+                transactions.transactions.forEach(tx => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="txid" title="${tx.txid}">${shortenHash(tx.txid)}</td>
+                        <td class="address" title="${tx.sender}">${shortenAddress(tx.sender)}</td>
+                        <td class="address" title="${tx.recipient}">${shortenAddress(tx.recipient)}</td>
+                        <td class="amount">${formatAmount(tx.quantity)}</td>
+                        <td><span class="status confirmed">Confirmed</span></td>
+                    `;
+                    txsBody.appendChild(row);
+                });
+                
+                // Add click handlers for block links
+                document.querySelectorAll('.view-block').forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const height = this.getAttribute('data-height');
+                        switchPage('blocks');
+                        // Trigger search for this block
+                        document.getElementById('block-search-input').value = height;
+                        searchBlock();
+                    });
+                });
+                
+            } catch (error) {
+                showNotification(`Error loading dashboard: ${error.message}`, 'error');
+            }
+        }
+        
+        // Update the loadBlocks function - look for where you're trying to access block.hash
+        async function loadBlocks() {
+            try {
+                // Get total chain length
+                const chainInfo = await fetchJSON(`${currentNodeUrl}/network/info`);
+                const totalBlocks = chainInfo.height;
+                
+                // Calculate pagination
+                const totalPages = Math.ceil(totalBlocks / blocksPerPage);
+                
+                // Calculate which blocks to show for this page (newest first)
+                // Page 1: newest blocks (totalBlocks to totalBlocks - blocksPerPage + 1)
+                // Page 2: next newest blocks, etc.
+                const firstBlockInPage = totalBlocks - ((currentBlockPage - 1) * blocksPerPage);
+                const lastBlockInPage = Math.max(1, firstBlockInPage - blocksPerPage + 1);
+                
+                // Get chain data
+                const chainData = await fetchJSON(`${currentNodeUrl}/network/blocks?count=${totalBlocks}`);
+                const blocksBody = document.getElementById('all-blocks-body');
+                blocksBody.innerHTML = '';
+                
+                // Create a map of block index to block for easy lookup
+                const blockMap = {};
+                chainData.blocks.forEach(block => {
+                    blockMap[block.index] = block;
+                });
+                
+                // Display blocks from newest to oldest for current page
+                for (let blockIndex = firstBlockInPage; blockIndex >= lastBlockInPage; blockIndex--) {
+                    const block = blockMap[blockIndex];
+                    if (!block) {
+                        console.warn(`Block ${blockIndex} not found in chain`);
+                        continue;
+                    }
+                    
+                    const blockHash = block.hash;
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><a href="#" class="view-block" data-height="${block.index}">${block.index}</a></td>
+                        <td class="hash" title="${blockHash}">${shortenHash(blockHash)}</td>
+                        <td>${block.transactions ? block.transactions.length : 0}</td>
+                        <td>${formatTimestamp(block.timestamp)}</td>
+                        <td>${estimateBlockSize(block)} KB</td>
+                        <td class="address" title="${findMiner(block)}">${shortenAddress(findMiner(block))}</td>
+                    `;
+                    blocksBody.appendChild(row);
+                }
+                
+                // Create pagination with better page range display
+                const pagination = document.getElementById('blocks-pagination');
+                pagination.innerHTML = '';
+                
+                // Previous button (goes to newer blocks - lower page number)
+                if (currentBlockPage > 1) {
+                    const prevBtn = document.createElement('button');
+                    prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+                    prevBtn.title = 'Newer blocks';
+                    prevBtn.addEventListener('click', () => {
+                        currentBlockPage--;
+                        loadBlocks();
+                    });
+                    pagination.appendChild(prevBtn);
+                }
+                
+                // Calculate page range to show (max 7 pages)
+                let startPage = Math.max(1, currentBlockPage - 3);
+                let endPage = Math.min(totalPages, startPage + 6);
+                
+                // Adjust if we're near the end
+                if (endPage - startPage < 6) {
+                    startPage = Math.max(1, endPage - 6);
+                }
+                
+                // First page button if not in range
+                if (startPage > 1) {
+                    const firstBtn = document.createElement('button');
+                    firstBtn.textContent = '1';
+                    firstBtn.title = 'Newest blocks (page 1)';
+                    firstBtn.addEventListener('click', () => {
+                        currentBlockPage = 1;
+                        loadBlocks();
+                    });
+                    pagination.appendChild(firstBtn);
+                    
+                    if (startPage > 2) {
+                        const ellipsis = document.createElement('span');
+                        ellipsis.textContent = '...';
+                        ellipsis.style.padding = '0.5rem';
+                        pagination.appendChild(ellipsis);
+                    }
+                }
+                
+                // Page number buttons
+                for (let i = startPage; i <= endPage; i++) {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.textContent = i;
+                    if (i === currentBlockPage) pageBtn.classList.add('active');
+                    pageBtn.title = `Page ${i} - ${i === 1 ? 'Newest blocks' : 'Older blocks'}`;
+                    pageBtn.addEventListener('click', () => {
+                        currentBlockPage = i;
+                        loadBlocks();
+                    });
+                    pagination.appendChild(pageBtn);
+                }
+                
+                // Last page button if not in range
+                if (endPage < totalPages) {
+                    if (endPage < totalPages - 1) {
+                        const ellipsis = document.createElement('span');
+                        ellipsis.textContent = '...';
+                        ellipsis.style.padding = '0.5rem';
+                        pagination.appendChild(ellipsis);
+                    }
+                    
+                    const lastBtn = document.createElement('button');
+                    lastBtn.textContent = totalPages;
+                    lastBtn.title = 'Oldest blocks';
+                    lastBtn.addEventListener('click', () => {
+                        currentBlockPage = totalPages;
+                        loadBlocks();
+                    });
+                    pagination.appendChild(lastBtn);
+                }
+                
+                // Next button (goes to older blocks - higher page number)
+                if (currentBlockPage < totalPages) {
+                    const nextBtn = document.createElement('button');
+                    nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                    nextBtn.title = 'Older blocks';
+                    nextBtn.addEventListener('click', () => {
+                        currentBlockPage++;
+                        loadBlocks();
+                    });
+                    pagination.appendChild(nextBtn);
+                }
+                
+                // Add click handlers for block links
+                document.querySelectorAll('.view-block').forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const height = this.getAttribute('data-height');
+                        document.getElementById('block-search-input').value = height;
+                        searchBlock();
+                    });
+                });
+                
+                // Update page info
+                const pageInfo = document.createElement('div');
+                pageInfo.style.marginTop = '1rem';
+                pageInfo.style.textAlign = 'center';
+                pageInfo.style.color = 'var(--gray)';
+                
+                pageInfo.innerHTML = `Showing blocks ${firstBlockInPage} to ${lastBlockInPage} of ${totalBlocks} (newest first)`;
+                
+                // Remove existing page info if any
+                const existingInfo = pagination.nextElementSibling;
+                if (existingInfo && existingInfo.classList.contains('page-info')) {
+                    existingInfo.remove();
+                }
+                
+                pageInfo.classList.add('page-info');
+                pagination.parentNode.insertBefore(pageInfo, pagination.nextSibling);
+                
+            } catch (error) {
+                showNotification(`Error loading blocks: ${error.message}`, 'error');
+            }
+        }
+        
+        // Load transactions
+        async function loadTransactions() {
+            try {
+                // Get recent transactions
+                const transactions = await fetchJSON(`${currentNodeUrl}/network/transactions?count=${transactionsPerPage * 2}`);
+                
+                const txsBody = document.getElementById('all-transactions-body');
+                txsBody.innerHTML = '';
+                
+                // Apply pagination
+                const startIdx = (currentTransactionPage - 1) * transactionsPerPage;
+                const endIdx = startIdx + transactionsPerPage;
+                const pageTransactions = transactions.transactions.slice(startIdx, endIdx);
+                
+                pageTransactions.forEach(tx => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="txid" title="${tx.txid}"><a href="#" class="view-tx" data-txid="${tx.txid}">${shortenHash(tx.txid)}</a></td>
+                        <td class="address" title="${tx.sender}">${shortenAddress(tx.sender)}</td>
+                        <td class="address" title="${tx.recipient}">${shortenAddress(tx.recipient)}</td>
+                        <td class="amount">${formatAmount(tx.quantity)}</td>
+                        <td>${tx.fee ? formatAmount(tx.fee) : '0'}</td>
+                        <td>${tx.block_height !== null ? tx.block_height : 'Mempool'}</td>
+                        <td><span class="status ${tx.block_height !== null ? 'confirmed' : 'pending'}">${tx.block_height !== null ? 'Confirmed' : 'Pending'}</span></td>
+                    `;
+                    txsBody.appendChild(row);
+                });
+                
+                // Create pagination
+                const totalPages = Math.ceil(transactions.transactions.length / transactionsPerPage);
+                const pagination = document.getElementById('transactions-pagination');
+                pagination.innerHTML = '';
+                
+                if (currentTransactionPage > 1) {
+                    const prevBtn = document.createElement('button');
+                    prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+                    prevBtn.addEventListener('click', () => {
+                        currentTransactionPage--;
+                        loadTransactions();
+                    });
+                    pagination.appendChild(prevBtn);
+                }
+                
+                for (let i = 1; i <= Math.min(totalPages, 5); i++) {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.textContent = i;
+                    if (i === currentTransactionPage) pageBtn.classList.add('active');
+                    pageBtn.addEventListener('click', () => {
+                        currentTransactionPage = i;
+                        loadTransactions();
+                    });
+                    pagination.appendChild(pageBtn);
+                }
+                
+                if (currentTransactionPage < totalPages) {
+                    const nextBtn = document.createElement('button');
+                    nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                    nextBtn.addEventListener('click', () => {
+                        currentTransactionPage++;
+                        loadTransactions();
+                    });
+                    pagination.appendChild(nextBtn);
+                }
+                
+                // Add click handlers for transaction links
+                document.querySelectorAll('.view-tx').forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const txid = this.getAttribute('data-txid');
+                        document.getElementById('tx-search-input').value = txid;
+                        searchTransaction();
+                    });
+                });
+                
+            } catch (error) {
+                showNotification(`Error loading transactions: ${error.message}`, 'error');
+            }
+        }
+        
+        // Load network info
+        async function loadNetworkInfo() {
+            try {
+                const networkInfo = await fetchJSON(`${currentNodeUrl}/network/info`);
+                
+                // Network status
+                document.getElementById('network-status').innerHTML = `
+                    <div class="stat-value">Online</div>
+                    <div class="stat-desc">Height: ${networkInfo.height}</div>
+                    <div class="stat-desc">Version: ${networkInfo.node.version}</div>
+                    <div class="stat-desc">Node Owner: ${shortenAddress(networkInfo.node.owner)}</div>
+                `;
+                
+                // Avris Guard
+                document.getElementById('avris-guard').innerHTML = `
+                    <div class="stat-value">${networkInfo.avriguard ? 'Active' : 'Inactive'}</div>
+                    <div class="stat-desc">Threshold: ${networkInfo.threshold} blocks/hour</div>
+                    <div class="stat-desc">Window: ${networkInfo.window} hours</div>
+                `;
+                
+                // Fee info
+                try {
+                    const feeEstimate = await fetchJSON(`${currentNodeUrl}/network/fee_estimate`);
+                    document.getElementById('fee-info').innerHTML = `
+                        <div class="stat-value">${feeEstimate.current_fee_percent.toFixed(2)}%</div>
+                        <div class="stat-desc">Mempool: ${feeEstimate.mempool_utilization}</div>
+                        <div class="stat-desc">Pending TXs: ${feeEstimate.pending_transactions}</div>
+                    `;
+                } catch (e) {
+                    document.getElementById('fee-info').innerHTML = `
+                        <div class="stat-value">N/A</div>
+                        <div class="stat-desc">Fee info not available</div>
+                    `;
+                }
+                
+                // Mempool info
+                try {
+                    const feeEstimate = await fetchJSON(`${currentNodeUrl}/network/fee_estimate`);
+                    document.getElementById('mempool-info').innerHTML = `
+                        <div class="stat-value">${feeEstimate.pending_transactions}</div>
+                        <div class="stat-desc">${feeEstimate.mempool_utilization} full</div>
+                        <div class="stat-desc">Block capacity: ${feeEstimate.next_block_capacity}</div>
+                    `;
+                } catch (e) {
+                    document.getElementById('mempool-info').innerHTML = `
+                        <div class="stat-value">N/A</div>
+                        <div class="stat-desc">Mempool info not available</div>
+                    `;
+                }
+                
+                // Nodes list
+                document.getElementById('nodes-list').innerHTML = `
+                    <div class="stat-value">${networkInfo.node_count} nodes</div>
+                    <div class="stat-desc">Connected to the network</div>
+                `;
+                
+            } catch (error) {
+                showNotification(`Error loading network info: ${error.message}`, 'error');
+            }
+        }
+        
+        // Search for a block
+        async function searchBlock() {
+            const query = document.getElementById('block-search-input').value.trim();
+            if (!query) {
+                alert('Please enter a block height or hash');
+                return;
+            }
+            
+            const blockDetails = document.getElementById('block-details');
+            blockDetails.innerHTML = `<div class="loading"><i class="fas fa-spinner"></i> Searching for block...</div>`;
+            
+            try {
+                let block;
+                
+                // Try as block number first
+                if (/^\d+$/.test(query)) {
+                    block = await fetchJSON(`${currentNodeUrl}/network/block/${query}`);
+                } else {
+                    // Try as block hash
+                    block = await fetchJSON(`${currentNodeUrl}/network/getblockbyhash/${query}`);
+                }
+                
+                if (block.ERROR) {
+                    blockDetails.innerHTML = `<div class="card"><div class="card-header"><h3>Block Not Found</h3></div><p>${block.ERROR}</p></div>`;
+                    return;
+                }
+                
+                // Format block details
+                blockDetails.innerHTML = `
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Block #${block.index}</h3>
+                            <i class="fas fa-cube"></i>
+                        </div>
+                        <div style="padding: 1rem;">
+                            <p><strong>Hash:</strong> <span class="hash" title="${block.hash}">${block.hash}</span></p>
+                            <p><strong>Previous Hash:</strong> <span class="hash" title="${block.prev_hash}">${shortenHash(block.prev_hash)}</span></p>
+                            <p><strong>Timestamp:</strong> ${formatTimestamp(block.timestamp)}</p>
+                            <p><strong>Proof:</strong> ${block.proofN}</p>
+                            <p><strong>Transactions:</strong> ${block.transactions ? block.transactions.length : 0}</p>
+                            <p><strong>Miner:</strong> <span class="address" title="${findMiner(block)}">${findMiner(block)}</span></p>
+                            
+                            <h4 style="margin-top: 1.5rem; margin-bottom: 0.5rem;">Transactions</h4>
+                            <div class="table-container">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>TXID</th>
+                                            <th>From</th>
+                                            <th>To</th>
+                                            <th>Amount</th>
+                                            <th>Fee</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${block.transactions ? block.transactions.map(tx => `
+                                            <tr>
+                                                <td class="txid" title="${tx.txid}"><a href="#" class="view-tx" data-txid="${tx.txid}">${shortenHash(tx.txid)}</a></td>
+                                                <td class="address" title="${tx.sender}">${shortenAddress(tx.sender)}</td>
+                                                <td class="address" title="${tx.recipient}">${shortenAddress(tx.recipient)}</td>
+                                                <td class="amount">${formatAmount(tx.quantity)}</td>
+                                                <td>${tx.fee ? formatAmount(tx.fee) : '0'}</td>
+                                            </tr>
+                                        `).join('') : '<tr><td colspan="5">No transactions</td></tr>'}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Add click handlers for transaction links
+                document.querySelectorAll('.view-tx').forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const txid = this.getAttribute('data-txid');
+                        switchPage('transactions');
+                        document.getElementById('tx-search-input').value = txid;
+                        searchTransaction();
+                    });
+                });
+                
+            } catch (error) {
+                blockDetails.innerHTML = `<div class="card"><div class="card-header"><h3>Error</h3></div><p>${error.message}</p></div>`;
+            }
+        }
+        
+        // Search for a transaction
+        async function searchTransaction() {
+            const query = document.getElementById('tx-search-input').value.trim();
+            if (!query) {
+                alert('Please enter a transaction ID');
+                return;
+            }
+            
+            const txDetails = document.getElementById('transaction-details');
+            txDetails.innerHTML = `<div class="loading"><i class="fas fa-spinner"></i> Searching for transaction...</div>`;
+            
+            try {
+                const tx = await fetchJSON(`${currentNodeUrl}/network/transactionbyid/${query}`);
+                
+                if (tx.ERROR) {
+                    txDetails.innerHTML = `<div class="card"><div class="card-header"><h3>Transaction Not Found</h3></div><p>${tx.ERROR}</p></div>`;
+                    return;
+                }
+                
+                // Format transaction details
+                txDetails.innerHTML = `
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Transaction</h3>
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <div style="padding: 1rem;">
+                            <p><strong>TXID:</strong> <span class="hash" title="${tx.transaction.txid}">${tx.transaction.txid}</span></p>
+                            <p><strong>Status:</strong> <span class="status ${tx.block_height !== null ? 'confirmed' : 'pending'}">${tx.block_height !== null ? `Confirmed in block ${tx.block_height}` : 'Unconfirmed in mempool'}</span></p>
+                            ${tx.block_height !== null ? `<p><strong>Block Height:</strong> ${tx.block_height}</p>` : ''}
+                            <p><strong>Timestamp:</strong> ${formatTimestamp(tx.transaction.timestamp)}</p>
+                            <p><strong>From:</strong> <span class="address" title="${tx.transaction.sender}">${tx.transaction.sender}</span></p>
+                            <p><strong>To:</strong> <span class="address" title="${tx.transaction.recipient}">${tx.transaction.recipient}</span></p>
+                            <p><strong>Amount:</strong> <span class="amount">${formatAmount(tx.transaction.quantity)} AVR</span></p>
+                            <p><strong>Fee:</strong> ${tx.transaction.fee ? formatAmount(tx.transaction.fee) + ' AVR' : '0 AVR'}</p>
+                            ${tx.transaction.memo ? `<p><strong>Memo:</strong> ${tx.transaction.memo}</p>` : ''}
+                        </div>
+                    </div>
+                `;
+                
+            } catch (error) {
+                txDetails.innerHTML = `<div class="card"><div class="card-header"><h3>Error</h3></div><p>${error.message}</p></div>`;
+            }
+        }
+        
+        // Search for an address
+        async function searchAddress() {
+            const query = document.getElementById('address-input').value.trim();
+            if (!query) {
+                alert('Please enter an address');
+                return;
+            }
+            
+            const addressDetails = document.getElementById('address-details');
+            addressDetails.innerHTML = `<div class="loading"><i class="fas fa-spinner"></i> Searching for address...</div>`;
+            
+            try {
+                // Get balance
+                const balance = await fetchJSON(`${currentNodeUrl}/user/balance/${query}`);
+                
+                // Get transactions
+                const transactions = await fetchJSON(`${currentNodeUrl}/network/transactions/${query}`);
+                
+                // Get difficulty info if available
+                let difficultyInfo = null;
+                try {
+                    difficultyInfo = await fetchJSON(`${currentNodeUrl}/network/checkaddrdiff/${query}`);
+                } catch (e) {
+                    // Difficulty endpoint might not be available
+                }
+                
+                // Calculate total received and sent
+                let totalReceived = 0;
+                let totalSent = 0;
+                
+                transactions.transactions.forEach(tx => {
+                    if (tx.recipient === query) {
+                        totalReceived += tx.quantity;
+                    }
+                    if (tx.sender === query) {
+                        totalSent += tx.quantity;
+                    }
+                });
+                
+                // Format address details
+                addressDetails.innerHTML = `
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Address: ${shortenAddress(query)}</h3>
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <div style="padding: 1rem;">
+                            <p><strong>Address:</strong> <span class="address" title="${query}">${query}</span></p>
+                            <p><strong>Balance:</strong> <span class="amount">${formatAmount(balance.Balance)} AVR</span></p>
+                            <p><strong>Total Received:</strong> ${formatAmount(totalReceived)} AVR</p>
+                            <p><strong>Total Sent:</strong> ${formatAmount(totalSent)} AVR</p>
+                            <p><strong>Transaction Count:</strong> ${transactions.transactions.length}</p>
+                            
+                            ${difficultyInfo ? `
+                                <div style="margin-top: 1rem; padding: 1rem; background: #f5f5f5; border-radius: 4px;">
+                                    <h4>Mining Info</h4>
+                                    <p><strong>Status:</strong> ${difficultyInfo.status}</p>
+                                    <p><strong>Message:</strong> ${difficultyInfo.message}</p>
+                                    <p><strong>Difficulty Multiplier:</strong> ${difficultyInfo.difficulty_multiplier}</p>
+                                    <p><strong>Blocks per Hour:</strong> ${difficultyInfo.current_blocks_per_hour}</p>
+                                </div>
+                            ` : ''}
+                            
+                            <h4 style="margin-top: 1.5rem; margin-bottom: 0.5rem;">Transactions</h4>
+                            <div class="table-container">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>TXID</th>
+                                            <th>Type</th>
+                                            <th>Counterparty</th>
+                                            <th>Amount</th>
+                                            <th>Block</th>
+                                            <th>Timestamp</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${transactions.transactions.slice(0, 10).map(tx => {
+                                            const type = tx.sender === query ? 'Sent' : 'Received';
+                                            const counterparty = tx.sender === query ? tx.recipient : tx.sender;
+                                            const amountClass = tx.sender === query ? '' : 'amount';
+                                            const amountPrefix = tx.sender === query ? '-' : '+';
+                                            
+                                            return `
+                                                <tr>
+                                                    <td class="txid" title="${tx.txid}"><a href="#" class="view-tx" data-txid="${tx.txid}">${shortenHash(tx.txid)}</a></td>
+                                                    <td><span class="status ${type === 'Sent' ? 'pending' : 'confirmed'}">${type}</span></td>
+                                                    <td class="address" title="${counterparty}">${shortenAddress(counterparty)}</td>
+                                                    <td class="${amountClass}">${amountPrefix}${formatAmount(tx.quantity)}</td>
+                                                    <td>${tx.block_height}</td>
+                                                    <td>${formatTimestamp(tx.timestamp)}</td>
+                                                </tr>
+                                            `;
+                                        }).join('')}
+                                        ${transactions.transactions.length > 10 ? `
+                                            <tr>
+                                                <td colspan="6" style="text-align: center; padding: 1rem;">
+                                                    ... and ${transactions.transactions.length - 10} more transactions
+                                                </td>
+                                            </tr>
+                                        ` : ''}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Add click handlers for transaction links
+                document.querySelectorAll('.view-tx').forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const txid = this.getAttribute('data-txid');
+                        switchPage('transactions');
+                        document.getElementById('tx-search-input').value = txid;
+                        searchTransaction();
+                    });
+                });
+                
+            } catch (error) {
+                addressDetails.innerHTML = `<div class="card"><div class="card-header"><h3>Error</h3></div><p>${error.message}</p></div>`;
+            }
+        }
+        
+        // Global search
+        async function globalSearch() {
+            const query = document.getElementById('global-search-input').value.trim();
+            if (!query) {
+                alert('Please enter a search term');
+                return;
+            }
+            
+            const searchResults = document.getElementById('search-results');
+            searchResults.innerHTML = `<div class="loading"><i class="fas fa-spinner"></i> Searching...</div>`;
+            
+            try {
+                // Try different search types
+                let resultsHTML = '';
+                
+                // Check if it's a block number
+                if (/^\d+$/.test(query)) {
+                    try {
+                        const block = await fetchJSON(`${currentNodeUrl}/network/block/${query}`);
+                        if (!block.ERROR) {
+                            resultsHTML = `
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3>Block Found</h3>
+                                        <i class="fas fa-cube"></i>
+                                    </div>
+                                    <div style="padding: 1rem;">
+                                        <p>Found block #${block.index}</p>
+                                        <p><strong>Hash:</strong> ${shortenHash(block.calculate_hash)}</p>
+                                        <p><strong>Transactions:</strong> ${block.transactions ? block.transactions.length : 0}</p>
+                                        <button class="search-btn" id="view-block-btn" style="margin-top: 1rem;">View Block Details</button>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    } catch (e) {
+                        // Not a block number
+                    }
+                }
+                
+                // Check if it's an address (look for balance)
+                if (!resultsHTML) {
+                    try {
+                        const balance = await fetchJSON(`${currentNodeUrl}/user/balance/${query}`);
+                        if (balance.Balance !== undefined) {
+                            resultsHTML = `
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3>Address Found</h3>
+                                        <i class="fas fa-wallet"></i>
+                                    </div>
+                                    <div style="padding: 1rem;">
+                                        <p>Found address with balance: ${formatAmount(balance.Balance)} AVR</p>
+                                        <p><strong>Address:</strong> ${shortenAddress(query)}</p>
+                                        <button class="search-btn" id="view-address-btn" style="margin-top: 1rem;">View Address Details</button>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    } catch (e) {
+                        // Not an address
+                    }
+                }
+                
+                // Check if it's a transaction ID
+                if (!resultsHTML) {
+                    try {
+                        const tx = await fetchJSON(`${currentNodeUrl}/network/transactionbyid/${query}`);
+                        if (!tx.ERROR) {
+                            resultsHTML = `
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3>Transaction Found</h3>
+                                        <i class="fas fa-exchange-alt"></i>
+                                    </div>
+                                    <div style="padding: 1rem;">
+                                        <p>Found transaction</p>
+                                        <p><strong>From:</strong> ${shortenAddress(tx.transaction.sender)}</p>
+                                        <p><strong>To:</strong> ${shortenAddress(tx.transaction.recipient)}</p>
+                                        <p><strong>Amount:</strong> ${formatAmount(tx.transaction.quantity)} AVR</p>
+                                        <button class="search-btn" id="view-tx-btn" style="margin-top: 1rem;">View Transaction Details</button>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    } catch (e) {
+                        // Not a transaction
+                    }
+                }
+                
+                // Check if it's a block hash
+                if (!resultsHTML) {
+                    try {
+                        const block = await fetchJSON(`${currentNodeUrl}/network/getblockbyhash/${query}`);
+                        if (!block.ERROR) {
+                            resultsHTML = `
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3>Block Found</h3>
+                                        <i class="fas fa-cube"></i>
+                                    </div>
+                                    <div style="padding: 1rem;">
+                                        <p>Found block #${block.index}</p>
+                                        <p><strong>Hash:</strong> ${shortenHash(block.calculate_hash)}</p>
+                                        <p><strong>Transactions:</strong> ${block.transactions ? block.transactions.length : 0}</p>
+                                        <button class="search-btn" id="view-block-btn" style="margin-top: 1rem;">View Block Details</button>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    } catch (e) {
+                        // Not a block hash
+                    }
+                }
+                
+                if (!resultsHTML) {
+                    resultsHTML = `
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>No Results Found</h3>
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div style="padding: 1rem;">
+                                <p>No block, transaction, or address found for "${query}"</p>
+                                <p>Try searching for:</p>
+                                <ul>
+                                    <li>Block height (e.g., "12345")</li>
+                                    <li>Block hash</li>
+                                    <li>Transaction ID</li>
+                                    <li>Address</li>
+                                </ul>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                searchResults.innerHTML = resultsHTML;
+                
+                // Add button handlers
+                if (document.getElementById('view-block-btn')) {
+                    document.getElementById('view-block-btn').addEventListener('click', () => {
+                        switchPage('blocks');
+                        document.getElementById('block-search-input').value = query;
+                        searchBlock();
+                    });
+                }
+                
+                if (document.getElementById('view-address-btn')) {
+                    document.getElementById('view-address-btn').addEventListener('click', () => {
+                        switchPage('transactions');
+                        document.getElementById('address-input').value = query;
+                        searchAddress();
+                    });
+                }
+                
+                if (document.getElementById('view-tx-btn')) {
+                    document.getElementById('view-tx-btn').addEventListener('click', () => {
+                        switchPage('transactions');
+                        document.getElementById('tx-search-input').value = query;
+                        searchTransaction();
+                    });
+                }
+                
+            } catch (error) {
+                searchResults.innerHTML = `<div class="card"><div class="card-header"><h3>Error</h3></div><p>${error.message}</p></div>`;
+            }
+        }
+        
+        // Helper functions
+        async function fetchJSON(url) {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            return await response.json();
+        }
+        
+        function formatNumber(num) {
+            return new Intl.NumberFormat().format(num);
+        }
+        
+        function formatAmount(amount) {
+            return parseFloat(amount).toFixed(2);
+        }
+        
+        function formatTimestamp(timestamp) {
+            if (!timestamp) return 'Unknown';
+            
+            // Check if timestamp is in seconds or milliseconds
+            const ts = timestamp < 10000000000 ? timestamp * 1000 : timestamp;
+            const date = new Date(ts);
+            
+            return date.toLocaleString();
+        }
+        
+        function formatHashrate(hashrate) {
+            if (hashrate >= 1e18) return (hashrate / 1e18).toFixed(2) + ' EH/s';
+            if (hashrate >= 1e15) return (hashrate / 1e15).toFixed(2) + ' PH/s';
+            if (hashrate >= 1e12) return (hashrate / 1e12).toFixed(2) + ' TH/s';
+            if (hashrate >= 1e9) return (hashrate / 1e9).toFixed(2) + ' GH/s';
+            if (hashrate >= 1e6) return (hashrate / 1e6).toFixed(2) + ' MH/s';
+            if (hashrate >= 1e3) return (hashrate / 1e3).toFixed(2) + ' kH/s';
+            return hashrate.toFixed(2) + ' H/s';
+        }
+        
+        function shortenHash(hash, length = 10) {
+            if (!hash || hash.length <= length * 2) return hash;
+            return hash.substring(0, length) + '...' + hash.substring(hash.length - length);
+        }
+        
+        function shortenAddress(address, length = 8) {
+            if (!address || address.length <= length * 2) return address;
+            return address.substring(0, length) + '...' + address.substring(address.length - length);
+        }
+        
+        function findMiner(block) {
+            if (!block || !block.transactions || !Array.isArray(block.transactions)) {
+                return 'Unknown';
+            }
+            
+            // Try to find the coinbase transaction (miner reward)
+            for (const tx of block.transactions) {
+                // Check for node/coinbase transactions
+                if (tx.sender === 'node' || 
+                    tx.sender === '0' || 
+                    tx.sender === '' || 
+                    (tx.sender && tx.sender.toLowerCase().includes('node')) ||
+                    (tx.amount && parseFloat(tx.amount) > 0 && (!tx.sender || tx.sender === ''))) {
+                    return tx.recipient || 'Unknown';
+                }
+            }
+            
+            // If no coinbase tx found, check for transaction with fee
+            for (const tx of block.transactions) {
+                if (tx.recipient && tx.recipient !== '') {
+                    return tx.recipient;
+                }
+            }
+            
+            return 'Unknown';
+        }
+        
+        function estimateBlockSize(block) {
+            // Very rough estimate: each transaction ~250 bytes, header ~100 bytes
+            const txCount = block.transactions ? block.transactions.length : 0;
+            return Math.round((txCount * 250 + 100) / 1024);
+        }
+        
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                border-radius: var(--border-radius);
+                color: white;
+                font-weight: 500;
+                z-index: 1000;
+                box-shadow: var(--shadow);
+                animation: slideIn 0.3s ease;
+            `;
+            
+            if (type === 'success') {
+                notification.style.backgroundColor = 'var(--success)';
+            } else if (type === 'error') {
+                notification.style.backgroundColor = 'var(--danger)';
+            } else {
+                notification.style.backgroundColor = 'var(--secondary)';
+            }
+            
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+            
+            // Add keyframes for animation
+            if (!document.getElementById('notification-styles')) {
+                const style = document.createElement('style');
+                style.id = 'notification-styles';
+                style.textContent = `
+                    @keyframes slideIn {
+                        from { transform: translateX(100%); opacity: 0; }
+                        to { transform: translateX(0); opacity: 1; }
+                    }
+                    @keyframes slideOut {
+                        from { transform: translateX(0); opacity: 1; }
+                        to { transform: translateX(100%); opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+    </script>
+</body>
+</html>

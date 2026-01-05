@@ -1,0 +1,9 @@
+{
+  "additionalFiles": "../../..,../../..,../../..,../..,../..,../..,../..,../../..,../../..,../../..,../../..,../../..,../../..,../../..,../../..,../../..,../../..,../..,../..,../../..,../../..,../../..,../../..,../../..,../../..,../../..,../../..,../../..,../../..,../../..,../../..",
+  "compiler.optimization_flags": "",
+  "customBuildProperties": "",
+  "fqbn": "arduino:avr:mini:cpu=atmega328",
+  "hardwareFolders": "/home/jamil/.arduino15/packages/arduino/hardware/avr/1.8.6,/home/jamil/.arduino15/packages/arduino/hardware/avr/1.8.6",
+  "otherLibrariesFolders": "/home/jamil/Documents/Arduino/libraries",
+  "sketchLocation": "/home/jamil/Documents/projects/Avris/arduino_code"
+}

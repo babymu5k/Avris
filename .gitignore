@@ -10,3 +10,6 @@ src/node/__pycache__
 src/data/config.json
 .avri_history
 .vscode/settings.json
+arduino_code/examples
+src/data/minichain.json
+__pycache__

@@ -6,24 +6,28 @@
         "**/.DS_Store": true,
         "**/Thumbs.db": true,
         "**/CVS": true,
-        ".python-version": true,
         "uv.lock": true,
         "pyproject.toml": true,
         "LICENSE": true,
         ".zed_history": true,
         "logo.jpg": true,
         ".vscode": true,
-        ".avri_history": true
+        ".avri_history": true,
+        "src/__pycache__": true,
+        ".python-version": true
     },
     "hide-files.files": [
-        ".python-version",
         "uv.lock",
         "pyproject.toml",
         "LICENSE",
         ".zed_history",
         "logo.jpg",
         ".vscode",
-        ".avri_history"
+        ".avri_history",
+        "src/__pycache__",
+        ".python-version"
     ],
-    "go.toolsEnvVars": {}
+    "go.toolsEnvVars": {},
+    "liveServer.settings.port": 5501,
+    "idf.pythonInstallPath": "/usr/bin/python"
 }

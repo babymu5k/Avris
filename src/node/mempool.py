@@ -14,9 +14,9 @@ class Mempool:
         self.max_size = max_size  # Prevent memory overload
         self.block_tx_limit = block_tx_limit
         # Dynamic Fees
-        self.base_fee = 0.01
-        self.max_fee = 0.05
-        self.fee_step = 0.001
+        self.base_fee = 0.001
+        self.max_fee = 0.01
+        self.fee_step = 0.0001
 
     def get_current_fee_percent(self):
         """Calculate dynamic fee based on mempool fullness"""

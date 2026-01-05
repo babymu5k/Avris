@@ -1,21 +1,30 @@
 [project]
-name = "zedovium"
+name = "Avris"
 version = "0.1.0"
-description = "Add your description here"
+description = "Source code for avris"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "base58>=2.1.1",
     "bip39>=0.0.2",
     "black>=25.1.0",
+    "blake3>=1.0.8",
     "ecdsa>=0.19.1",
+    "eth-account>=0.13.6",
+    "groestlcoin-hash>=1.0.3",
     "isort>=6.0.1",
     "jinja2>=3.1.6",
+    "mnemonic>=0.21",
     "prompt-toolkit>=3.0.50",
+    "pyserial>=3.5",
+    "pyskein>=1.0",
+    "randomx>=1.1.10.post3",
     "requests>=2.32.3",
     "sanic>=24.12.0",
     "sanic-ext>=24.12.0",
     "sanic-jinja2>=2022.11.11",
     "sanic-limiter>=0.1.3",
+    "serial>=0.0.97",
     "termcolor>=2.5.0",
     "ujson>=5.10.0",
     "web3>=7.10.0",

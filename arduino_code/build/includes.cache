@@ -1,0 +1,176 @@
+[
+  {
+    "added_include_path": "/home/jamil/.arduino15/packages/arduino/hardware/avr/1.8.6/cores/arduino"
+  },
+  {
+    "added_include_path": "/home/jamil/.arduino15/packages/arduino/hardware/avr/1.8.6/variants/eightanaloginputs"
+  },
+  {
+    "compile": {
+      "source_path": "/home/jamil/Documents/projects/Avris/arduino_code/build/sketch/arduino_code.ino.cpp",
+      "object_path": "/home/jamil/Documents/projects/Avris/arduino_code/build/sketch/arduino_code.ino.cpp.o",
+      "depfile_path": "/home/jamil/Documents/projects/Avris/arduino_code/build/sketch/arduino_code.ino.cpp.d"
+    },
+    "compile_task": {
+      "args": [
+        "/home/jamil/.arduino15/packages/arduino/tools/avr-gcc/7.3.0-atmel3.6.1-arduino7/bin/avr-g++",
+        "-c",
+        "-g",
+        "-Os",
+        "-w",
+        "-std=gnu++11",
+        "-fpermissive",
+        "-fno-exceptions",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-fno-threadsafe-statics",
+        "-Wno-error=narrowing",
+        "-flto",
+        "-w",
+        "-x",
+        "c++",
+        "-E",
+        "-CC",
+        "-mmcu=atmega328p",
+        "-DF_CPU=16000000L",
+        "-DARDUINO=10607",
+        "-DARDUINO_AVR_MINI",
+        "-DARDUINO_ARCH_AVR",
+        "-I/home/jamil/.arduino15/packages/arduino/hardware/avr/1.8.6/cores/arduino",
+        "-I/home/jamil/.arduino15/packages/arduino/hardware/avr/1.8.6/variants/eightanaloginputs",
+        "/home/jamil/Documents/projects/Avris/arduino_code/build/sketch/arduino_code.ino.cpp",
+        "-o",
+        "/dev/null"
+      ]
+    }
+  },
+  {
+    "missing_include_h": ""
+  },
+  {
+    "compile": {
+      "source_path": "/home/jamil/Documents/projects/Avris/arduino_code/build/sketch/backend.cpp",
+      "object_path": "/home/jamil/Documents/projects/Avris/arduino_code/build/sketch/backend.cpp.o",
+      "depfile_path": "/home/jamil/Documents/projects/Avris/arduino_code/build/sketch/backend.cpp.d"
+    },
+    "compile_task": {
+      "args": [
+        "/home/jamil/.arduino15/packages/arduino/tools/avr-gcc/7.3.0-atmel3.6.1-arduino7/bin/avr-g++",
+        "-c",
+        "-g",
+        "-Os",
+        "-w",
+        "-std=gnu++11",
+        "-fpermissive",
+        "-fno-exceptions",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-fno-threadsafe-statics",
+        "-Wno-error=narrowing",
+        "-flto",
+        "-w",
+        "-x",
+        "c++",
+        "-E",
+        "-CC",
+        "-mmcu=atmega328p",
+        "-DF_CPU=16000000L",
+        "-DARDUINO=10607",
+        "-DARDUINO_AVR_MINI",
+        "-DARDUINO_ARCH_AVR",
+        "-I/home/jamil/.arduino15/packages/arduino/hardware/avr/1.8.6/cores/arduino",
+        "-I/home/jamil/.arduino15/packages/arduino/hardware/avr/1.8.6/variants/eightanaloginputs",
+        "/home/jamil/Documents/projects/Avris/arduino_code/build/sketch/backend.cpp",
+        "-o",
+        "/dev/null"
+      ]
+    }
+  },
+  {
+    "missing_include_h": ""
+  },
+  {
+    "compile": {
+      "source_path": "/home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha1.cpp",
+      "object_path": "/home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha1.cpp.o",
+      "depfile_path": "/home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha1.cpp.d"
+    },
+    "compile_task": {
+      "args": [
+        "/home/jamil/.arduino15/packages/arduino/tools/avr-gcc/7.3.0-atmel3.6.1-arduino7/bin/avr-g++",
+        "-c",
+        "-g",
+        "-Os",
+        "-w",
+        "-std=gnu++11",
+        "-fpermissive",
+        "-fno-exceptions",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-fno-threadsafe-statics",
+        "-Wno-error=narrowing",
+        "-flto",
+        "-w",
+        "-x",
+        "c++",
+        "-E",
+        "-CC",
+        "-mmcu=atmega328p",
+        "-DF_CPU=16000000L",
+        "-DARDUINO=10607",
+        "-DARDUINO_AVR_MINI",
+        "-DARDUINO_ARCH_AVR",
+        "-I/home/jamil/.arduino15/packages/arduino/hardware/avr/1.8.6/cores/arduino",
+        "-I/home/jamil/.arduino15/packages/arduino/hardware/avr/1.8.6/variants/eightanaloginputs",
+        "/home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha1.cpp",
+        "-o",
+        "/dev/null"
+      ]
+    }
+  },
+  {
+    "missing_include_h": ""
+  },
+  {
+    "compile": {
+      "source_path": "/home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha256.cpp",
+      "object_path": "/home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha256.cpp.o",
+      "depfile_path": "/home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha256.cpp.d"
+    },
+    "compile_task": {
+      "args": [
+        "/home/jamil/.arduino15/packages/arduino/tools/avr-gcc/7.3.0-atmel3.6.1-arduino7/bin/avr-g++",
+        "-c",
+        "-g",
+        "-Os",
+        "-w",
+        "-std=gnu++11",
+        "-fpermissive",
+        "-fno-exceptions",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-fno-threadsafe-statics",
+        "-Wno-error=narrowing",
+        "-flto",
+        "-w",
+        "-x",
+        "c++",
+        "-E",
+        "-CC",
+        "-mmcu=atmega328p",
+        "-DF_CPU=16000000L",
+        "-DARDUINO=10607",
+        "-DARDUINO_AVR_MINI",
+        "-DARDUINO_ARCH_AVR",
+        "-I/home/jamil/.arduino15/packages/arduino/hardware/avr/1.8.6/cores/arduino",
+        "-I/home/jamil/.arduino15/packages/arduino/hardware/avr/1.8.6/variants/eightanaloginputs",
+        "/home/jamil/Documents/projects/Avris/arduino_code/build/sketch/sha256.cpp",
+        "-o",
+        "/dev/null"
+      ]
+    }
+  },
+  {
+    "missing_include_h": ""
+  }
+]

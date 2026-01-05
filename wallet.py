@@ -10,6 +10,8 @@ from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from prompt_toolkit.completion import WordCompleter
 from termcolor import colored
 from src.node.addressgen import AddressGen
+from web3 import Web3
+from eth_account import Account
 
 
 class AVRIWalletCLI(cmd.Cmd):
@@ -24,8 +26,7 @@ class AVRIWalletCLI(cmd.Cmd):
             history=FileHistory(".avri_history"), auto_suggest=AutoSuggestFromHistory()
         )
         with open("src/data/words.txt", "r") as f:
-            WORDLIST = [line.strip() for line in f]
-            self.addressgen = AddressGen(WORDLIST)
+            self.addressgen = AddressGen()
             f.close()
 
         # Set up command completer
@@ -103,7 +104,7 @@ A   A   V   R   R III SSSS   v0.1.0
     def do_new(self, arg):
         """Create a new wallet: new"""
         try:
-            wallet = self.addressgen.generate()
+            wallet = self.addressgen.Generate()
             if wallet:
                 self.current_wallet = wallet
                 print("\n=== New Wallet Created ===")
@@ -151,7 +152,7 @@ A   A   V   R   R III SSSS   v0.1.0
     def _get_balance(self, address):
         """Helper method to get balance"""
         try:
-            response = requests.get(f"{self.NODE_URL}/user/balance/{address}")
+            response = requests.get(f"{self.NODE_URL}/user/balance/{Web3.to_checksum_address(address)}")
             if response.status_code == 200:
                 return response.json().get("Balance", 0)
             return 0
@@ -193,7 +194,7 @@ A   A   V   R   R III SSSS   v0.1.0
             fee = requests.get(f"{self.NODE_URL}/network/fee_estimate").json()
 
             # Validate recipient address
-            if self.validate(recipient) == False:
+            if self.addressgen.Validate(recipient)["status"] == False:
                 print("Invalid recipient address")
                 return
 
@@ -220,14 +221,25 @@ A   A   V   R   R III SSSS   v0.1.0
                 print("Transaction canceled")
                 return
 
+            tx = {
+                "to": Web3.to_checksum_address(recipient),
+                "value": hex(int(amount)),
+                "gas": 0,
+                "gasPrice": 0,
+                "nonce": 0,
+                "chainId": 4024,  # Mainnet
+            }
+            signer = Account.from_key(self.current_wallet["seed"])
+            rawtx = signer.sign_transaction(tx)
+
             # Send transaction
             response = requests.post(
                 f"{self.NODE_URL}/transaction/create",
                 json={
-                    "sender": self.current_wallet["address"],
-                    "recipient": recipient,
-                    "amount": amount,
-                    "seed": self.current_wallet["seed"],
+                    # "sender": self.current_wallet["address"],
+                    # "recipient": recipient,
+                    # "amount": amount,
+                    "rawtx": rawtx.raw_transaction.hex(),
                     "memo": memo,
                 },
             )
@@ -391,11 +403,9 @@ A   A   V   R   R III SSSS   v0.1.0
         print(colored(f"\nUnconfirmed transaction:", "blue"))
         print("-" * 80)
         for transaction in mempool["transactions"]:
-            if (
-                self.current_wallet is not None and (
-                    transaction["sender"] == self.current_wallet["address"]
-                    or transaction["recipient"] == self.current_wallet["address"]
-                )
+            if self.current_wallet is not None and (
+                transaction["sender"] == self.current_wallet["address"]
+                or transaction["recipient"] == self.current_wallet["address"]
             ):
                 print(f"TXID: {transaction['txid']}")
                 print(f"From: {transaction['sender']}")
@@ -547,25 +557,9 @@ A   A   V   R   R III SSSS   v0.1.0
         print(f"Unknown command: {line}")
         print("Type 'help' for available commands")
 
-    def validate(self, address):
-        """Check if an address is valid"""
-        if not address.startswith("AVRI-"):
-            return False
-
-        parts = address.split("-")
-        if len(parts) != 6:  # AVRI + 4 words + checksum
-            return False
-
-        checksum = parts[-1]
-        phrase = "-".join(parts[1:-1])
-
-        # Verify checksum
-        expected_checksum = hashlib.sha256(phrase.encode()).hexdigest()[:4]
-        return checksum == expected_checksum
-
     def getnode(self):
         response = requests.get(
-            "https://raw.githubusercontent.com/babymu5k/Zedovium/refs/heads/develop/nodelist.json"
+            "https://raw.githubusercontent.com/babymu5k/avris/refs/heads/develop/nodelist.json"
         ).json()
         return random.choice(response["nodes"])
 
